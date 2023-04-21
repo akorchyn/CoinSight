@@ -38,7 +38,7 @@
               inherit inputs pkgs;
               modules = [
                 {
-                  packages = with pkgs; [rust-toolchain binaryen protobuf clang];
+                  packages = with pkgs; [rust-toolchain binaryen protobuf clang nodejs-18_x];
                   env = rust-env;
                   enterShell = "echo csshell";
                 }
