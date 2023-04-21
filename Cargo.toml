@@ -1,6 +1,6 @@
 
 [workspace]
-members = ["backend/common/communication"]
+members = ["backend/common/communication", "frontend"]
 
 
 [workspace.package]
@@ -16,6 +16,11 @@ tonic = "0.9"
 tonic-build = "0.9"
 prost = "0.11"
 prost-types = "0.11"
+## Frontend releated
+axum = "0.6"
+dioxus = { version = "0.3" }
+dioxus-ssr = { version = "0.3" }
+tokio = { version = "1.15.0" }
 
 
 # Our crates (CS for Coinsight, B for Backend, F for Frontend)

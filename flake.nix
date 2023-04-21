@@ -25,6 +25,9 @@
           };
 
           rust-env = with pkgs; {
+            LD_LIBRARY_PATH = pkgs.lib.strings.makeLibraryPath [
+              pkgs.stdenv.cc.cc.lib
+            ];
             PROTOC = "${pkgs.protobuf}/bin/protoc";
             RUSTUP_TOOLCHAIN = (builtins.fromTOML (builtins.readFile ./rust-toolchain.toml)).toolchain.channel; # for dylint
           };
@@ -35,7 +38,7 @@
               inherit inputs pkgs;
               modules = [
                 {
-                  packages = with pkgs; [rust-toolchain binaryen protobuf];
+                  packages = with pkgs; [rust-toolchain binaryen protobuf clang];
                   env = rust-env;
                   enterShell = "echo csshell";
                 }
