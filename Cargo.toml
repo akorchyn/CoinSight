@@ -1,0 +1,22 @@
+
+[workspace]
+members = ["backend/common/communication"]
+
+
+[workspace.package]
+authors = ["Artur-Yurii Korchynskyui <artur.yurii.korchynskyi@gmail.com>"]
+edition = "2021"
+repository = "http://github.com/akorchyn/coinsight"
+
+
+[workspace.dependencies]
+# Common
+## GRPC releated
+tonic = "0.9"
+tonic-build = "0.9"
+prost = "0.11"
+prost-types = "0.11"
+
+
+# Our crates (CS for Coinsight, B for Backend, F for Frontend)
+csb-comm = { path = "backend/common/communication" }
