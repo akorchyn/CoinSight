@@ -1,6 +1,6 @@
 
 [workspace]
-members = ["backend/common/communication", "frontend"]
+members = ["backend/common/communication"]
 
 
 [workspace.package]
