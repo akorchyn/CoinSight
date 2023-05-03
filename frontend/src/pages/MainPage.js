@@ -1,5 +1,5 @@
 import React from 'react';
-import CryptoList from '../components/CryptoList';
+import CryptoList from '../components/main/CryptoList';
 import { mockedCryptoDetails } from '../mockedData';
 import './css/MainPage.css';
 

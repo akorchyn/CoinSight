@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { Link } from 'react-router-dom';
-import CryptoCurrencyCard from './CryptoCurrencyCard';
+import CryptoCurrencyCard from '../common/CryptoCurrencyCard';
 import './CryptoList.css';
 
 const CryptoList = ({ cryptos }) => {
@@ -15,7 +15,7 @@ const CryptoList = ({ cryptos }) => {
                     const previousPrice = asset.price_history[asset.price_history.length - 2]?.price || 0;
 
                     return (
-                        <Link key={asset.symbol} to={`/details/${key}`} style={{ textDecoration: 'none' }}>
+                        <Link key={asset.symbol} to={`/asset/${key}`} style={{ textDecoration: 'none' }}>
                             <CryptoCurrencyCard
                                 assetName={asset.name}
                                 symbol={asset.symbol}

@@ -1,14 +1,14 @@
 // src/App.js
 
 import './App.css';
-import Navbar from './components/Navbar';
+import Navbar from './components/common/Navbar';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import CryptoDetails from './components/CryptoDetails';
 import Alerts from './components/Alerts';
 import { mockedCryptoDetails } from './mockedData';
 import { ConfigProvider } from 'antd';
 import MainPage from './pages/MainPage';
-import Footer from './components/Footer';
+import AssetPage from './pages/AssetPage';
+import Footer from './components/common/Footer';
 
 function App() {
   return (
@@ -20,10 +20,10 @@ function App() {
       <Router>
         <div className="App">
           <Navbar />
-          <div class="background-message">Coin Sight</div>
+          <div className="background-message">Coin Sight</div>
           <Routes>
             <Route path="/" element={<MainPage />} />
-            <Route path="/details/:id" element={<CryptoDetails cryptos={mockedCryptoDetails} />} />
+            <Route path="/asset/:id" element={<AssetPage cryptos={mockedCryptoDetails} />} />
             <Route path="/alerts" element={<Alerts />} />
           </Routes>
           <Footer />

@@ -2,7 +2,7 @@
 
 
 export const mockedCryptoDetails = {
-    "0": {
+    "BTC": {
         id: 0,
         name: 'Bitcoin',
         current_price: 45000,
@@ -14,7 +14,7 @@ export const mockedCryptoDetails = {
             { date: '2023-04-22', price: 45000 },
         ],
     },
-    "1": {
+    "ETH": {
         id: 1,
         name: 'Ethereum',
         symbol: 'ETH',
@@ -26,7 +26,7 @@ export const mockedCryptoDetails = {
             { date: '2023-04-22', price: 3000 },
         ],
     },
-    "2": {
+    "XRP": {
         name: 'Ripple',
         symbol: 'XRP',
         current_price: 0.9,

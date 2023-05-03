@@ -10,7 +10,7 @@ const Footer = () => {
             <p>
                 <a href="#">Terms of Service</a> | <a href="#">Privacy Policy</a>
             </p>
-            <p class="footer-motto">Join the revolution. Invest in the future.</p>
+            <p className="footer-motto">Join the revolution. Invest in the future.</p>
         </footer>
     );
 }
