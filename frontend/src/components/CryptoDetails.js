@@ -7,7 +7,7 @@ import { Chart } from 'chart.js';
 import zoomPlugin from 'chartjs-plugin-zoom';
 import { registerables, CategoryScale, LinearScale } from 'chart.js';
 import 'chartjs-adapter-date-fns';
-import styles from './CryptoDetails.module.css';
+import './CryptoDetails.css';
 
 // Register required scales and plugins
 Chart.register(...registerables, CategoryScale, LinearScale, zoomPlugin);
@@ -50,11 +50,11 @@ const CryptoDetails = ({ cryptos }) => {
     }
 
     return (
-        <div className={styles.container}>
-            <h2 className={styles.title}>{crypto.name} Details</h2>
-            <div className={styles.details}>
+        <div className="container">
+            <h2 className="title">{crypto.name} Details</h2>
+            <div className="details">
                 <p>Current Price: ${crypto.current_price}</p>
-                <Line data={chartData} className={styles.chart} />
+                <Line data={chartData} className="chart" />
             </div>
         </div>
     );

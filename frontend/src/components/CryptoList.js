@@ -3,11 +3,11 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import CryptoCurrencyCard from './CryptoCurrencyCard';
-import styles from './CryptoList.module.css';
+import './CryptoList.css';
 
 const CryptoList = ({ cryptos }) => {
     return (
-        <div className={styles['crypto-list']}>
+        <div className="crypto-list">
             {
                 Object.keys(cryptos).map((key) => {
 

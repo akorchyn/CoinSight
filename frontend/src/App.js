@@ -3,11 +3,12 @@
 import './App.css';
 import Navbar from './components/Navbar';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import CryptoList from './components/CryptoList';
 import CryptoDetails from './components/CryptoDetails';
 import Alerts from './components/Alerts';
 import { mockedCryptoDetails } from './mockedData';
-import { ConfigProvider, theme } from 'antd';
+import { ConfigProvider } from 'antd';
+import MainPage from './pages/MainPage';
+import Footer from './components/Footer';
 
 function App() {
   return (
@@ -21,10 +22,11 @@ function App() {
           <Navbar />
           <div class="background-message">Coin Sight</div>
           <Routes>
-            <Route path="/" element={<CryptoList cryptos={mockedCryptoDetails} />} />
+            <Route path="/" element={<MainPage />} />
             <Route path="/details/:id" element={<CryptoDetails cryptos={mockedCryptoDetails} />} />
             <Route path="/alerts" element={<Alerts />} />
           </Routes>
+          <Footer />
         </div>
       </Router>
     </ConfigProvider>
