@@ -43,7 +43,7 @@ const CryptoDetails = ({ cryptos }) => {
         };
 
         fetchData();
-    }, [id]);
+    }, [id, cryptos]);
 
     if (!crypto) {
         return <div>Loading...</div>;

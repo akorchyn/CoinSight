@@ -1,3 +1,22 @@
+body {
+  background-color: #232323;
+  background-image: radial-gradient(#424242 1px, transparent 1px), radial-gradient(#424242 1px, transparent 1px);
+  background-size: 20px 20px;
+  background-position: 0 0, 10px 10px;
+}
+
+.background-message {
+  font-size: 4em;
+  font-weight: bold;
+  color: #eee;
+  text-align: center;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  opacity: 50%;
+}
+
 .App {
   text-align: center;
 }
@@ -32,6 +51,7 @@
   from {
     transform: rotate(0deg);
   }
+
   to {
     transform: rotate(360deg);
   }

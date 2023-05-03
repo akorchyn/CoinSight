@@ -22,7 +22,7 @@ export const mockedCryptoDetails = {
         price_history: [
             { date: '2023-04-01', price: 2800 },
             { date: '2023-04-08', price: 2900 },
-            { date: '2023-04-15', price: 2950 },
+            { date: '2023-04-15', price: 3100 },
             { date: '2023-04-22', price: 3000 },
         ],
     },

@@ -2,40 +2,14 @@
 
 .crypto-list {
     margin: 20px;
-    font-size: 16px;
-    font-family: 'Roboto', sans-serif;
-}
-
-table {
-    width: 100%;
-    border-collapse: collapse;
-}
-
-th,
-td {
-    padding: 10px;
-    text-align: left;
-    border-bottom: 1px solid #ccc;
-}
-
-th {
-    background-color: #f2f2f2;
-}
-
-.crypto-name {
+    font-size: 1rem;
     text-decoration: none;
-    color: #333;
-    font-weight: bold;
-}
+    display: flex;
+    justify-content: space-evenly;
+    flex-wrap: wrap;
 
-.crypto-name:hover {
-    text-decoration: underline;
-}
+    /* align-items: center; */
+    gap: 1rem;
 
-.green {
-    color: green;
-}
-
-.red {
-    color: red;
+    /* flex-wrap: wrap; */
 }

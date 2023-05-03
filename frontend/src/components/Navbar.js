@@ -3,6 +3,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import styles from './Navbar.module.css';
+import Search from './Search';
 
 const Navbar = () => {
     return (
@@ -10,6 +11,8 @@ const Navbar = () => {
             <h1 className={styles.logo}>
                 <Link to="/" className={styles.logo}>CoinSight</Link>
             </h1>
+            <Search></Search>
+
             <ul>
                 <li>
                     <Link to="/" className={styles.navItem}>Home</Link>
