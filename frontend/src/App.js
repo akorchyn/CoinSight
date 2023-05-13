@@ -9,27 +9,40 @@ import { ConfigProvider } from 'antd';
 import MainPage from './pages/MainPage';
 import AssetPage from './pages/AssetPage';
 import Footer from './components/common/Footer';
+import { ApolloClient, ApolloProvider, InMemoryCache } from '@apollo/client';
+
+
+const client = new ApolloClient({
+  uri: "http://localhost:8000/graphql",
+  fetchOptions: {
+    mode: 'no-cors',
+  },
+  cache: new InMemoryCache()
+});
 
 function App() {
   return (
-    <ConfigProvider theme={{
-      token: {
-        colorBgBase: '#333'
-      },
-    }}>
-      <Router>
-        <div className="App">
-          <Navbar />
-          <div className="background-message">Coin Sight</div>
-          <Routes>
-            <Route path="/" element={<MainPage />} />
-            <Route path="/asset/:id" element={<AssetPage cryptos={mockedCryptoDetails} />} />
-            <Route path="/alerts" element={<Alerts />} />
-          </Routes>
-          <Footer />
-        </div>
-      </Router>
-    </ConfigProvider>
+    <ApolloProvider client={client}>
+      <ConfigProvider theme={{
+        token: {
+          colorBgBase: '#333'
+        },
+      }}>
+        <Router>
+          <div className="App">
+            <Navbar />
+            <div className="background-message">Coin Sight</div>
+            <Routes>
+              <Route path="/" element={<MainPage />} />
+              <Route path="/asset/:symbol" element={<AssetPage cryptos={mockedCryptoDetails} />} />
+              <Route path="/alerts" element={<Alerts />} />
+            </Routes>
+            <Footer />
+          </div>
+        </Router>
+      </ConfigProvider>
+    </ApolloProvider>
+
   );
 }
 

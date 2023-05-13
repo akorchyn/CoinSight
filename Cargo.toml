@@ -1,6 +1,6 @@
 
 [workspace]
-members = ["backend/common/communication"]
+members = ["backend/common/communication", "backend/graphql-api", "backend/db"]
 
 
 [workspace.package]
@@ -11,12 +11,28 @@ repository = "http://github.com/akorchyn/coinsight"
 
 [workspace.dependencies]
 # Common
+thiserror = "1.0"
+anyhow = "1.0"
+bigdecimal = "0.3"
+chrono = "0.4"
 ## GRPC releated
 tonic = "0.9"
 tonic-build = "0.9"
 prost = "0.11"
 prost-types = "0.11"
 
+## GraphQL releated
+juniper = { git = "https://github.com/graphql-rust/juniper.git", branch = "master" }
+juniper_rocket = { git = "https://github.com/graphql-rust/juniper.git", branch = "master" }
+
+## Web releated
+rocket = { version = "0.5.0-rc.3", default-features = false }
+rocket_cors = "0.6.0-alpha2"
+
+## Db
+diesel = { version = "2.0", features = ["postgres"] }
+dotenvy = "0.15.7"
 
 # Our crates (CS for Coinsight, B for Backend, F for Frontend)
 csb-comm = { path = "backend/common/communication" }
+csb-db = { path = "backend/db" }

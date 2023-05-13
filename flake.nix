@@ -38,7 +38,7 @@
               inherit inputs pkgs;
               modules = [
                 {
-                  packages = with pkgs; [rust-toolchain binaryen protobuf clang nodejs-18_x];
+                  packages = with pkgs; [rust-toolchain binaryen protobuf clang nodejs-18_x diesel-cli postgresql.lib ];
                   env = rust-env;
                   enterShell = "echo csshell";
                 }

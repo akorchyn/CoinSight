@@ -1,0 +1,18 @@
+[package]
+name = "csb-grapql-lib"
+version = "0.1.0"
+edition.workspace = true
+
+
+[[bin]]
+name = "csb-graphql-api"
+path = "src/bin/server.rs"
+
+[dependencies]
+juniper = { workspace = true, features = ["chrono", "bigdecimal"] }
+juniper_rocket.workspace = true
+rocket.workspace = true
+rocket_cors.workspace = true
+dotenvy.workspace = true
+
+csb-db.workspace = true

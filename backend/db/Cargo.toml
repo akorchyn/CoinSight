@@ -1,0 +1,19 @@
+[package]
+name = "csb-db"
+version = "0.1.0"
+edition.workspace = true
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+diesel = { workspace = true, features = [
+    "postgres",
+    "r2d2",
+    "chrono",
+    "numeric",
+] }
+juniper.workspace = true
+thiserror.workspace = true
+anyhow.workspace = true
+bigdecimal.workspace = true
+chrono = { workspace = true, features = ["serde"] }
