@@ -23,3 +23,27 @@ services:
       - POSTGRES_DB=coin_sight
     ports:
       - 5432:5432
+  graphql:
+    build: .
+    restart: always
+    depends_on:
+      - postgres
+    networks:
+      - network
+    ports:
+      - 8000:8000
+    environment:
+      - ROCKET_ADDRESS=0.0.0.0
+      - DATABASE_URL=${DATABASE_URL}
+  frontend:
+    restart: always
+    build: frontend
+    depends_on:
+      - graphql
+    networks:
+      - network
+    ports:
+      - 3000:3000
+    environment:
+      - REACT_APP_API_ENDPOINT=http://localhost:8000/graphql
+  
