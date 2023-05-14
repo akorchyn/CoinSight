@@ -1,6 +1,6 @@
 use juniper::graphql_object;
 
-use crate::Context;
+use csb_db::Context;
 
 pub struct Subscription;
 

@@ -7,60 +7,56 @@ import PriceHistoryChart from '../components/asset/Charts';
 import AssetInfo from '../components/asset/StatisticInfo';
 import { gql, useQuery } from '@apollo/client';
 
-const GET_CRYPTO_CURRENCY = gql`
+const GRAPHQL_REQUEST = gql`
   query getCrypto($symbol: String!) {
     cryptocurrency(symbol: $symbol) {
-      id
-      name
-      description
-    }
-  }
-`;
-
-const GET_CRYPTO_DETAILS = gql`
-  query GetCryptoDetails($cryptoId: Int!) {
-    aggregatedPriceLatest(cryptoId: $cryptoId, currencyId: 1) {
+      symbol,
+      name,
+      description,
+      latestAggregatedPrice {
         medianPrice,
-        firstQuartilePrice, thirdQuartilePrice
-    }
+        firstQuartilePrice,
+        thirdQuartilePrice,
+        timestamp
+      },
+      aggregatedHistory {
+        medianPrice, firstQuartilePrice, thirdQuartilePrice, timestamp
+      }
+      history(sourceId: 1) {
+        price,  timestamp
+      }
+    },
   }
 `;
 
 const AssetPage = () => {
-    const { symbol } = useParams();
-    const { loading, error, data } = useQuery(GET_CRYPTO_CURRENCY, {
-        variables: { symbol }
-    });
+  const { symbol } = useParams();
+  const { loading, error, data } = useQuery(GRAPHQL_REQUEST, {
+    variables: { symbol }
+  });
 
-    const cryptocurrency = data?.cryptocurrency;
-    const id = cryptocurrency?.id;
+  if (loading) {
+    return null;
+  }
 
-    const { loading1, error1, data: aggregatedPrice } = useQuery(GET_CRYPTO_DETAILS, {
-        enable: !!id,
-        variables: { cryptoId: id }
-    });
+  if (error) {
+    return <p>Error: {error.message}</p>;
+  }
 
-    if (loading || loading1 || id === undefined) {
-        return null;
-    }
+  const cryptocurrency = data?.cryptocurrency;
 
-    if (error || error1) {
-        return <p>Error: {error.message || error1.message}</p>;
-    }
-
-    const priceInfo = aggregatedPrice?.aggregatedPriceLatest;
-
-
-
-    return (
-        <div className="container">
-            <h2 className="title">{cryptocurrency.name} Details</h2>
-            <div className="details">
-                <AssetInfo assetData={{ ...cryptocurrency, ...priceInfo }} />
-                {/* <PriceHistoryChart data={chartData} /> */}
-            </div>
-        </div>
-    );
+  const priceInfo = cryptocurrency.latestAggregatedPrice;
+  const history = cryptocurrency.history.slice().reverse();
+  console.log(cryptocurrency);
+  return (
+    <div className="container">
+      <h2 className="title">{cryptocurrency.name} Details</h2>
+      <div className="details">
+        <AssetInfo assetData={{ ...cryptocurrency, ...priceInfo }} />
+        <PriceHistoryChart data={history} />
+      </div>
+    </div>
+  );
 };
 
 export default AssetPage;

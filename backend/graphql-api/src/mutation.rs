@@ -1,6 +1,5 @@
+use csb_db::Context;
 use juniper::graphql_object;
-
-use crate::Context;
 
 pub struct Mutation;
 

@@ -16,7 +16,7 @@ function PriceHistoryChart({ data }) {
         <ResponsiveContainer width="100%" height={500}>
             <LineChart data={data}>
                 <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="date" tickFormatter={formatXAxis} />
+                <XAxis dataKey="timestamp" tickFormatter={formatXAxis} />
                 <YAxis />
                 <Tooltip formatter={formatTooltip} />
                 <Line

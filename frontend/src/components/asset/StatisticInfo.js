@@ -3,7 +3,6 @@ import numeral from "numeral";
 
 function AssetInfo({ assetData }) {
   const { name, description, medianPrice, firstQuartilePrice, thirdQuartilePrice } = assetData;
-  console.log(assetData);
   return (
     <div>
       <h1>{name}</h1>

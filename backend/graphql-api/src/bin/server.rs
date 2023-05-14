@@ -1,4 +1,5 @@
-use csb_grapql_lib::{mutation::Mutation, query::Query, subscription::Subscription, Context};
+use csb_db::Context;
+use csb_grapql_lib::{mutation::Mutation, query::Query, subscription::Subscription};
 use rocket::{response::content, State};
 use rocket_cors::{AllowedOrigins, CorsOptions, Method};
 use std::str::FromStr;

@@ -11,11 +11,9 @@ const Search = () => {
         const searchWrapper = document.querySelector(".search-wrapper");
         const inputHolder = document.querySelector(".input-holder");
         if (searchWrapper.classList.contains("active") && inputHolder.hasAttributes()) {
-            console.log("hello")
             searchWrapper.classList.remove("active");
             setValue("");
         } else if (!searchWrapper.classList.contains("active")) {
-            console.log("bye")
             searchWrapper.classList.add("active");
             e.preventDefault();
         }

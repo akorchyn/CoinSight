@@ -1,7 +1,8 @@
-use csb_db::models::{self, Cryptocurrency};
+use csb_db::{
+    models::{self, Cryptocurrency},
+    Context,
+};
 use juniper::{graphql_object, FieldResult};
-
-use crate::Context;
 
 pub struct Query;
 
