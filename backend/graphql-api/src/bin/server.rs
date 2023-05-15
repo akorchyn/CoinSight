@@ -1,5 +1,6 @@
 use csb_db::Context;
-use csb_grapql_lib::{mutation::Mutation, query::Query, subscription::Subscription};
+use csb_grapql_lib::{mutation::Mutation, query::Query};
+use juniper::EmptySubscription;
 use rocket::{response::content, State};
 use rocket_cors::{AllowedOrigins, CorsOptions, Method};
 use std::str::FromStr;
@@ -11,21 +12,21 @@ fn graphiql() -> content::RawHtml<String> {
 }
 
 #[rocket::get("/graphql?<request>")]
-fn get_graphql_handler(
+async fn get_graphql_handler(
     context: &State<Context>,
     request: juniper_rocket::GraphQLRequest,
     schema: &State<Schema>,
 ) -> juniper_rocket::GraphQLResponse {
-    request.execute_sync(schema, context)
+    request.execute(schema, context).await
 }
 
 #[rocket::post("/graphql", data = "<request>")]
-fn post_graphql_handler(
+async fn post_graphql_handler(
     context: &State<Context>,
     request: juniper_rocket::GraphQLRequest,
     schema: &State<Schema>,
 ) -> juniper_rocket::GraphQLResponse {
-    request.execute_sync(schema, context)
+    request.execute(schema, context).await
 }
 
 #[rocket::main]
@@ -39,6 +40,7 @@ async fn main() {
                 Method::from_str("get").unwrap(),
                 Method::from_str("post").unwrap(),
                 Method::from_str("patch").unwrap(),
+                Method::from_str("options").unwrap(),
             ]
             .into_iter()
             .map(From::from)
@@ -47,10 +49,16 @@ async fn main() {
         .allow_credentials(true);
 
     let database_url = std::env::var("DATABASE_URL").expect("DATABASE_URL must be set");
-    let context = Context::new(database_url).expect("Failed to create context");
+    let context = Context::new(database_url)
+        .await
+        .expect("Failed to create context");
     let _ = rocket::build()
         .manage(context)
-        .manage(Schema::new(Query {}, Mutation {}, Subscription {}))
+        .manage(Schema::new(
+            Query {},
+            Mutation {},
+            EmptySubscription::<Context>::new(),
+        ))
         .mount(
             "/",
             rocket::routes![graphiql, get_graphql_handler, post_graphql_handler],

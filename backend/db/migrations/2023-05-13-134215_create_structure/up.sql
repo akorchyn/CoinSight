@@ -3,7 +3,8 @@ CREATE TABLE cryptocurrencies (
   id SERIAL PRIMARY KEY,
   name VARCHAR(255) NOT NULL,
   symbol VARCHAR(50) NOT NULL,
-  description TEXT NOT NULL
+  description TEXT NOT NULL,
+  is_top BOOLEAN NOT NULL DEFAULT false
 );
 
 -- Add unique constraint on the lower case symbol in cryptocurrencies
@@ -30,7 +31,8 @@ CREATE TABLE source_crypto_mappings (
   id SERIAL PRIMARY KEY,
   crypto_id INT REFERENCES cryptocurrencies(id) NOT NULL,
   source_id INT REFERENCES sources(id) NOT NULL,
-  source_key VARCHAR(255) NOT NULL
+  source_key VARCHAR(255) NOT NULL,
+  UNIQUE(crypto_id, source_id)
 );
 
 -- Create table for prices
@@ -40,7 +42,9 @@ CREATE TABLE prices (
   source_id INT REFERENCES sources(id) NOT NULL,
   currency_id INT REFERENCES currencies(id) NOT NULL,
   price DECIMAL(20, 8) NOT NULL,
-  timestamp TIMESTAMP NOT NULL
+  timestamp TIMESTAMP NOT NULL,
+  is_processed BOOLEAN NOT NULL DEFAULT false,
+  UNIQUE(crypto_id, source_id, currency_id, timestamp)
 );
 
 -- Create table for aggregated prices
@@ -51,7 +55,8 @@ CREATE TABLE aggregated_prices (
   median_price DECIMAL(20, 8) NOT NULL,
   first_quartile_price DECIMAL(20, 8) NOT NULL,
   third_quartile_price DECIMAL(20, 8) NOT NULL,
-  timestamp TIMESTAMP NOT NULL
+  timestamp TIMESTAMP NOT NULL,
+  UNIQUE(crypto_id, currency_id, timestamp)
 );
 
 -- Index for faster search in prices

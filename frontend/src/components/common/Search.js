@@ -9,11 +9,11 @@ import { Link } from "react-router-dom";
 const SEARCH_QUERY = gql`
   query Search($query: String!) {
     search(query: $query) {
-      name,
-      symbol,
-      latestAggregatedPrice {
-        medianPrice
-      }
+        name
+        symbol
+        aggregatedHistory(limit: 2) {
+            medianPrice
+        }
     }
   }
 `;
@@ -45,11 +45,15 @@ const Search = () => {
                 {error && <p>Error: {error.message}</p>}
                 {value.length > 0 && result && result.length == 0 && <p>No results</p>}
                 {value.length > 0 && result && result.length > 0 && (
-                    result.map((item) => (
-                        <Link key={item.symbol} to={`/asset/${item.symbol}`} style={{ textDecoration: 'none' }} onClick={() => setValue('')}>
-                            <CryptoCurrencyCard key={item.symbol} assetName={item.name} symbol={item.symbol} currentPrice={item.latestAggregatedPrice.medianPrice} />
-                        </Link>
-                    ))
+                    result.map((item) => {
+                        const current_price = item.aggregatedHistory[0]?.medianPrice || 0;
+                        const previousPrice = item.aggregatedHistory[1]?.medianPrice || 0;
+                        return (
+                            <Link key={item.symbol} to={`/asset/${item.symbol}`} style={{ textDecoration: 'none' }} onClick={() => setValue('')}>
+                                <CryptoCurrencyCard key={item.symbol} assetName={item.name} symbol={item.symbol} currentPrice={current_price} previousPrice={previousPrice} />
+                            </Link>
+                        );
+                    })
                 )}
             </div>
         </div>

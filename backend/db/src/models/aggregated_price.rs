@@ -1,4 +1,6 @@
 use diesel::prelude::*;
+use diesel_async::AsyncPgConnection;
+use diesel_async::RunQueryDsl;
 use juniper::GraphQLObject;
 
 #[derive(Queryable, GraphQLObject)]
@@ -13,8 +15,8 @@ pub struct AggregatedPrice {
 }
 
 impl AggregatedPrice {
-    pub fn get_latest(
-        connection: &mut PgConnection,
+    pub async fn get_latest(
+        connection: &mut AsyncPgConnection,
         crypto_id: i32,
         currency_id: i32,
     ) -> QueryResult<AggregatedPrice> {
@@ -28,10 +30,11 @@ impl AggregatedPrice {
             .filter(currency_id_column.eq(currency_id))
             .order_by(timestamp.desc())
             .first(connection)
+            .await
     }
 
-    pub fn get_history_paged(
-        connection: &mut PgConnection,
+    pub async fn get_history_paged(
+        connection: &mut AsyncPgConnection,
         crypto_id: i32,
         currency_id: i32,
         page: i32,
@@ -49,5 +52,6 @@ impl AggregatedPrice {
             .offset((page * page_size) as i64)
             .limit(page_size as i64)
             .load(connection)
+            .await
     }
 }

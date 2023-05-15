@@ -1,0 +1,18 @@
+[package]
+name = "chainlink-collector"
+version = "0.1.0"
+edition.workspace = true
+
+
+[dependencies]
+tokio.workspace = true
+anyhow.workspace = true
+reqwest.workspace = true
+ethers.workspace = true
+thiserror.workspace = true
+futures.workspace = true
+dotenvy.workspace = true
+chrono.workspace = true
+bigdecimal.workspace = true
+
+csb-db.workspace = true

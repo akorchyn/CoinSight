@@ -1,7 +1,7 @@
 import React from "react";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 
-function PriceHistoryChart({ data }) {
+function PriceHistoryChart({ data, sources }) {
     const formatXAxis = (tickItem) => {
         // Format tick labels as dates using a library like moment.js
         return tickItem;

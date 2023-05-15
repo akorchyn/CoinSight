@@ -1,6 +1,5 @@
 // src/components/CryptoDetails.js
 
-import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import './css/AssetPage.css';
 import PriceHistoryChart from '../components/asset/Charts';

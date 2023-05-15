@@ -1,4 +1,6 @@
 use diesel::prelude::*;
+use diesel_async::AsyncPgConnection;
+use diesel_async::RunQueryDsl;
 use juniper::GraphQLObject;
 
 #[derive(Queryable, GraphQLObject)]
@@ -9,9 +11,9 @@ pub struct Currency {
 }
 
 impl Currency {
-    pub fn by_id(connection: &mut PgConnection, id: i32) -> QueryResult<Currency> {
+    pub async fn by_id(connection: &mut AsyncPgConnection, id: i32) -> QueryResult<Currency> {
         use crate::schema::currencies::dsl::currencies;
 
-        currencies.find(id).first(connection)
+        currencies.find(id).first(connection).await
     }
 }

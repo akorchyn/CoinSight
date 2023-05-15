@@ -18,6 +18,7 @@ diesel::table! {
         name -> Varchar,
         symbol -> Varchar,
         description -> Text,
+        is_top -> Bool,
     }
 }
 
@@ -37,6 +38,7 @@ diesel::table! {
         currency_id -> Int4,
         price -> Numeric,
         timestamp -> Timestamp,
+        is_processed -> Bool,
     }
 }
 

@@ -12,14 +12,15 @@ const CryptoList = ({ cryptos }) => {
                 Object.keys(cryptos).map((key) => {
 
                     const asset = cryptos[key];
-                    const previousPrice = asset.price_history[asset.price_history.length - 2]?.price || 0;
+                    const current_price = asset.aggregatedHistory[0]?.medianPrice || 0;
+                    const previousPrice = asset.aggregatedHistory[1]?.medianPrice || 0;
 
                     return (
-                        <Link key={asset.symbol} to={`/asset/${key}`} style={{ textDecoration: 'none' }}>
+                        <Link key={asset.symbol} to={`/asset/${asset.symbol}`} style={{ textDecoration: 'none' }}>
                             <CryptoCurrencyCard
                                 assetName={asset.name}
                                 symbol={asset.symbol}
-                                currentPrice={asset.current_price}
+                                currentPrice={current_price}
                                 previousPrice={previousPrice}
                             />
                         </Link>

@@ -1,6 +1,11 @@
 
 [workspace]
-members = ["backend/common/communication", "backend/graphql-api", "backend/db"]
+members = [
+    "backend/common/communication",
+    "backend/graphql-api",
+    "backend/db",
+    "backend/collectors/chainlink",
+]
 
 
 [workspace.package]
@@ -15,6 +20,11 @@ thiserror = "1.0"
 anyhow = "1.0"
 bigdecimal = "0.3"
 chrono = "0.4"
+tokio = { version = "1", features = ["full"] }
+reqwest = { version = "0.11", features = ["json", "stream", "trust-dns"] }
+futures = "0.3"
+serde = "1.0"
+
 ## GRPC releated
 tonic = "0.9"
 tonic-build = "0.9"
@@ -30,9 +40,13 @@ rocket = { version = "0.5.0-rc.3", default-features = false }
 rocket_cors = "0.6.0-alpha2"
 
 ## Db
-diesel = { version = "2.0", features = ["postgres"] }
+diesel = "2.0"
+diesel-async = "0.2"
 dotenvy = "0.15.7"
 
-# Our crates (CS for Coinsight, B for Backend, F for Frontend)
+## collectors
+ethers = { version = "2.0.0", features = ["legacy", "abigen"] }
+
+# Our crates (CS for Coinsight, B for Backend)
 csb-comm = { path = "backend/common/communication" }
 csb-db = { path = "backend/db" }

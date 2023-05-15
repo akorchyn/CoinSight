@@ -24,7 +24,9 @@ services:
     ports:
       - 5432:5432
   graphql:
-    build: .
+    build:
+      context: .
+      target: graphql
     restart: always
     depends_on:
       - postgres
@@ -34,6 +36,18 @@ services:
       - 8000:8000
     environment:
       - ROCKET_ADDRESS=0.0.0.0
+      - DATABASE_URL=${DATABASE_URL}
+  chainlink-collector:
+    build:
+      context: .
+      target: chainlink-collector
+    restart: always
+    depends_on:
+      - postgres
+    networks:
+      - network
+    environment:
+      - NODE_URL=https://eth-rpc.gateway.pokt.network/
       - DATABASE_URL=${DATABASE_URL}
   frontend:
     restart: always

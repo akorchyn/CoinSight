@@ -6,13 +6,9 @@ edition.workspace = true
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-diesel = { workspace = true, features = [
-    "postgres",
-    "r2d2",
-    "chrono",
-    "numeric",
-] }
-juniper.workspace = true
+diesel = { workspace = true, features = ["chrono", "numeric"] }
+diesel-async = { workspace = true, features = ["postgres", "bb8"] }
+juniper = { workspace = true, features = ["chrono", "bigdecimal"] }
 thiserror.workspace = true
 anyhow.workspace = true
 bigdecimal.workspace = true

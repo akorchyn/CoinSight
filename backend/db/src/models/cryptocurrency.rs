@@ -1,4 +1,5 @@
 use diesel::prelude::*;
+use diesel_async::{AsyncPgConnection, RunQueryDsl};
 use juniper::{graphql_object, FieldResult};
 
 use crate::Context;
@@ -11,36 +12,55 @@ pub struct Cryptocurrency {
     pub name: String,
     pub symbol: String,
     pub description: String,
+    pub is_top: bool,
 }
 
 impl Cryptocurrency {
-    pub fn by_id(connection: &mut PgConnection, id: i32) -> QueryResult<Cryptocurrency> {
+    pub async fn by_id(connection: &mut AsyncPgConnection, id: i32) -> QueryResult<Cryptocurrency> {
         use crate::schema::cryptocurrencies::dsl::cryptocurrencies;
 
-        cryptocurrencies.find(id).first(connection)
+        cryptocurrencies.find(id).first(connection).await
     }
 
-    pub fn by_symbol(connection: &mut PgConnection, symbol: &str) -> QueryResult<Cryptocurrency> {
+    pub async fn by_symbol(
+        connection: &mut AsyncPgConnection,
+        symbol: &str,
+    ) -> QueryResult<Cryptocurrency> {
         use crate::schema::cryptocurrencies::dsl::{cryptocurrencies, symbol as symbol_column};
 
         cryptocurrencies
             .filter(symbol_column.eq(symbol))
             .first(connection)
+            .await
     }
 
-    pub fn search_by_symbol_or_name(
-        connection: &mut PgConnection,
+    pub async fn search_by_symbol_or_name(
+        connection: &mut AsyncPgConnection,
         query: String,
     ) -> QueryResult<Vec<Cryptocurrency>> {
         use crate::schema::cryptocurrencies::dsl::{cryptocurrencies, id, name, symbol};
 
         cryptocurrencies
-            .filter(symbol.ilike(format!("%{}%", query)))
-            .or_filter(name.ilike(format!("%{}%", query)))
+            .filter(symbol.ilike(format!("{query}%")))
+            .or_filter(name.ilike(format!("{query}%")))
             .order(name.asc())
             .group_by(id)
             .limit(10)
             .load(connection)
+            .await
+    }
+
+    pub async fn top_cryptocurrencies(
+        connection: &mut AsyncPgConnection,
+        limit: i64,
+    ) -> QueryResult<Vec<Cryptocurrency>> {
+        use crate::schema::cryptocurrencies::dsl::{cryptocurrencies, is_top};
+
+        cryptocurrencies
+            .filter(is_top.eq(true))
+            .limit(limit)
+            .load(connection)
+            .await
     }
 }
 
@@ -58,63 +78,62 @@ impl Cryptocurrency {
         &self.description
     }
 
-    fn latest_aggregated_price(
+    async fn latest_aggregated_price(
         &self,
         #[graphql(default = 1)] currency_id: i32,
         context: &Context,
     ) -> FieldResult<AggregatedPrice> {
-        let mut connection = context.db_connection.get()?;
-        Ok(AggregatedPrice::get_latest(
-            &mut connection,
-            self.id,
-            currency_id,
-        )?)
+        let mut connection = context.db_connection.get().await?;
+        Ok(AggregatedPrice::get_latest(&mut connection, self.id, currency_id).await?)
     }
 
-    fn latest_price(
+    async fn latest_price(
         &self,
         #[graphql(default = 1)] currency_id: i32,
         source_id: i32,
         context: &Context,
     ) -> FieldResult<Price> {
-        let mut connection = context.db_connection.get()?;
-        Ok(Price::get_latest(
-            &mut connection,
-            self.id,
-            currency_id,
-            source_id,
-        )?)
+        let mut connection = context.db_connection.get().await?;
+        Ok(Price::get_latest(&mut connection, self.id, currency_id, source_id).await?)
     }
 
-    fn aggregated_history(
+    async fn aggregated_history(
         &self,
         #[graphql(default = 1)] currency_id: i32,
+        #[graphql(default = 0)] offset: i32,
+        #[graphql(default = 500)] limit: i32,
         context: &Context,
     ) -> FieldResult<Vec<AggregatedPrice>> {
-        let mut connection = context.db_connection.get()?;
-        Ok(AggregatedPrice::get_history_paged(
-            &mut connection,
-            self.id,
-            currency_id,
-            0,
-            500,
-        )?)
+        let mut connection = context.db_connection.get().await?;
+        Ok(
+            AggregatedPrice::get_history_paged(
+                &mut connection,
+                self.id,
+                currency_id,
+                offset,
+                limit,
+            )
+            .await?,
+        )
     }
 
-    fn history(
+    async fn history(
         &self,
-        #[graphql(default = 1)] currency_id: i32,
         source_id: i32,
+        #[graphql(default = 1)] currency_id: i32,
+        #[graphql(default = 0)] offset: i32,
+        #[graphql(default = 500)] limit: i32,
         context: &Context,
     ) -> FieldResult<Vec<Price>> {
-        let mut connection = context.db_connection.get()?;
+        let mut connection = context.db_connection.get().await?;
         Ok(Price::get_history_paged(
             &mut connection,
             self.id,
             currency_id,
             source_id,
-            0,
-            500,
-        )?)
+            offset,
+            limit,
+        )
+        .await?)
     }
 }
