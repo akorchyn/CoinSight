@@ -90,4 +90,15 @@ impl Query {
             offset,
         )?)
     }
+
+    fn search(context: &Context, query: String) -> FieldResult<Vec<Cryptocurrency>> {
+        if query.is_empty() {
+            return Ok(vec![]);
+        }
+        let mut connection = context.db_connection.get()?;
+        Ok(Cryptocurrency::search_by_symbol_or_name(
+            &mut connection,
+            query,
+        )?)
+    }
 }

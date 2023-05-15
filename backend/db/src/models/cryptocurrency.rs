@@ -27,6 +27,21 @@ impl Cryptocurrency {
             .filter(symbol_column.eq(symbol))
             .first(connection)
     }
+
+    pub fn search_by_symbol_or_name(
+        connection: &mut PgConnection,
+        query: String,
+    ) -> QueryResult<Vec<Cryptocurrency>> {
+        use crate::schema::cryptocurrencies::dsl::{cryptocurrencies, id, name, symbol};
+
+        cryptocurrencies
+            .filter(symbol.ilike(format!("%{}%", query)))
+            .or_filter(name.ilike(format!("%{}%", query)))
+            .order(name.asc())
+            .group_by(id)
+            .limit(10)
+            .load(connection)
+    }
 }
 
 #[graphql_object(context = Context)]

@@ -1,5 +1,6 @@
 .crypto-card {
-    width: 400px;
+    width: 100%;
+    min-width: 450px;
     border-radius: 25px !important;
     font-size: 1.5rem;
     color: #fff;
@@ -13,6 +14,10 @@
     align-items: center;
 }
 
+.crypto-icon {
+    height: 50px;
+    width: 50px;
+}
 
 .crypto-icon-container {
     position: relative;

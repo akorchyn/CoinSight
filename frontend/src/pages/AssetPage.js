@@ -47,7 +47,6 @@ const AssetPage = () => {
 
   const priceInfo = cryptocurrency.latestAggregatedPrice;
   const history = cryptocurrency.history.slice().reverse();
-  console.log(cryptocurrency);
   return (
     <div className="container">
       <h2 className="title">{cryptocurrency.name} Details</h2>

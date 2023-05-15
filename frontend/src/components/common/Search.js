@@ -1,33 +1,59 @@
+import { gql, useQuery } from "@apollo/client";
 import React, { useState } from "react";
+import { Input, SIZE } from "baseui/input";
 
-import "./Search.css"
+import './Search.css';
+import CryptoCurrencyCard from "./CryptoCurrencyCard";
+import { Link } from "react-router-dom";
+
+const SEARCH_QUERY = gql`
+  query Search($query: String!) {
+    search(query: $query) {
+      name,
+      symbol,
+      latestAggregatedPrice {
+        medianPrice
+      }
+    }
+  }
+`;
 
 const Search = () => {
     const [value, setValue] = useState("");
-    const onInput = (e) => setValue(e.target.value);
+    const { loading, error, data } = useQuery(SEARCH_QUERY, {
+        variables: { query: value.trim() },
+    });
 
+    const result = data?.search;
 
-    const searchToggle = (e) => {
-        const searchWrapper = document.querySelector(".search-wrapper");
-        const inputHolder = document.querySelector(".input-holder");
-        if (searchWrapper.classList.contains("active") && inputHolder.hasAttributes()) {
-            searchWrapper.classList.remove("active");
-            setValue("");
-        } else if (!searchWrapper.classList.contains("active")) {
-            searchWrapper.classList.add("active");
-            e.preventDefault();
-        }
+    const onInput = (e) => {
+        setValue(e.target.value);
     };
 
     return (
-        <div className="search-wrapper">
-            <div className="input-holder">
-                <input type="text" className="search-input" placeholder="Type to search" onInput={onInput} value={value} />
-                <button className="search-icon" onClick={searchToggle}><span></span></button>
+        <div className="searchWrapper">
+            <Input
+                value={value}
+                onChange={onInput}
+                size={SIZE.large}
+                placeholder="Search..."
+                clearable
+                clearOnEscape
+            />
+            <div className="searchResults">
+                {loading && <p>Loading...</p>}
+                {error && <p>Error: {error.message}</p>}
+                {value.length > 0 && result && result.length == 0 && <p>No results</p>}
+                {value.length > 0 && result && result.length > 0 && (
+                    result.map((item) => (
+                        <Link key={item.symbol} to={`/asset/${item.symbol}`} style={{ textDecoration: 'none' }} onClick={() => setValue('')}>
+                            <CryptoCurrencyCard key={item.symbol} assetName={item.name} symbol={item.symbol} currentPrice={item.latestAggregatedPrice.medianPrice} />
+                        </Link>
+                    ))
+                )}
             </div>
-            <span className="close" onClick={searchToggle}></span>
         </div>
     );
-}
+};
 
 export default Search;
