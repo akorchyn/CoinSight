@@ -9,17 +9,11 @@ const CryptoCurrencyCard = ({ assetName, symbol, currentPrice, previousPrice }) 
     const isPriceUp = currentPrice > previousPrice;
     const priceColor = isPriceUp ? 'text-success' : 'text-danger';
     const arrowIcon = isPriceUp ? faArrowTrendUp : faArrowTrendDown;
-    console.log(useDynamicSvgImport(symbol.toLowerCase()));
-    const { error, loading, SvgIcon } = useDynamicSvgImport(symbol.toLowerCase(), onError = (e) => console.log(e));
 
     return (
         <Card className="crypto-card" hoverable type="inner">
             <div className="crypto-content">
                 <div className="crypto-icon-container">
-                    {loading && <p>Loading...</p>}
-                    {error && <p>Error: {error.message}</p>}
-                    {SvgIcon && <SvgIcon className="crypto-icon" alt={`${assetName} icon`} />}
-                    {/* <Icon name={symbol.toLowerCase()} alt={`${assetName} icon`} size={50} className="crypto-icon" /> */}
                 </div>
                 <div className="crypto-name">
                     <p>{assetName} <span className="symbol-text">{symbol}</span></p>
