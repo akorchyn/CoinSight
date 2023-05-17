@@ -23,7 +23,7 @@ impl Source {
     }
 }
 
-#[derive(Queryable, GraphQLObject)]
+#[derive(Queryable, GraphQLObject, Clone)]
 pub struct SourceCryptoMapping {
     pub id: i32,
     pub crypto_id: i32,

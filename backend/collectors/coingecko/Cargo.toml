@@ -1,0 +1,15 @@
+[package]
+name = "coingecko-collector"
+version = "0.1.0"
+edition.workspace = true
+
+
+[dependencies]
+tokio.workspace = true
+dotenvy.workspace = true
+serde_json.workspace = true
+anyhow.workspace = true
+bigdecimal.workspace = true
+
+csb-collector-common = { workspace = true }
+csb-db = { workspace = true }

@@ -17,6 +17,20 @@ ENV SSL_CERT_FILE=/etc/ssl/certs/ca-certificates.crt
 COPY --from=builder ./target/release/chainlink-collector ./app/chainlink-collector
 CMD ["/app/chainlink-collector"]
 
+FROM debian:latest as coingecko-collector
+RUN apt update -y && apt install -y libpq-dev libssl-dev ca-certificates
+RUN update-ca-certificates
+ENV SSL_CERT_FILE=/etc/ssl/certs/ca-certificates.crt
+COPY --from=builder ./target/release/coingecko-collector ./app/coingecko-collector
+CMD ["/app/coingecko-collector"]
+
+FROM debian:latest as cryptocompare-collector
+RUN apt update -y && apt install -y libpq-dev libssl-dev ca-certificates
+RUN update-ca-certificates
+ENV SSL_CERT_FILE=/etc/ssl/certs/ca-certificates.crt
+COPY --from=builder ./target/release/cryptocompare-collector ./app/cryptocompare-collector
+CMD ["/app/cryptocompare-collector"]
+
 FROM debian:latest as aggregator
 RUN apt update -y && apt install -y libpq-dev
 COPY --from=builder ./target/release/price-aggregator ./app/price-aggregator

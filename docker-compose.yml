@@ -49,6 +49,28 @@ services:
     environment:
       - NODE_URL=https://eth-rpc.gateway.pokt.network/
       - DATABASE_URL=${DATABASE_URL}
+  coingecko-collector:
+    build:
+      context: .
+      target: coingecko-collector
+    restart: always
+    depends_on:
+      - postgres
+    networks:
+      - network
+    environment:
+      - DATABASE_URL=${DATABASE_URL}
+  cryptocompare-collector:
+    build:
+      context: .
+      target: cryptocompare-collector
+    restart: always
+    depends_on:
+      - postgres
+    networks:
+      - network
+    environment:
+      - DATABASE_URL=${DATABASE_URL}
   aggregator:
     build:
       context: .

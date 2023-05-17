@@ -15,7 +15,7 @@ pub struct Price {
     pub is_processed: bool,
 }
 
-#[derive(Insertable)]
+#[derive(Insertable, Debug)]
 #[diesel(table_name = prices)]
 pub struct NewPrice {
     pub crypto_id: i32,
@@ -29,13 +29,14 @@ impl NewPrice {
     pub fn new(
         crypto_id: i32,
         source_id: i32,
+        currency_id: i32,
         price: bigdecimal::BigDecimal,
         timestamp: chrono::NaiveDateTime,
     ) -> Self {
         Self {
             crypto_id,
             source_id,
-            currency_id: 1, // Currently, supports only USD
+            currency_id,
             price,
             timestamp,
         }
@@ -115,7 +116,7 @@ impl Price {
             .filter(currency_id_column.eq(currency_id))
             .filter(timestamp.between(start, end))
             .filter(is_processed.eq(false))
-            .order_by(timestamp.asc())
+            .order_by(timestamp.desc())
             .load(connection)
             .await
     }

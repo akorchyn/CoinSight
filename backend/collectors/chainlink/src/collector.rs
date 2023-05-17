@@ -97,7 +97,7 @@ impl Collector {
         let latest_price =
             bigdecimal::BigDecimal::new(BigInt::from_signed_bytes_le(&bytes), decimals.into());
 
-        let new_price = NewPrice::new(crypto_id, self.source_id, latest_price, updated_at);
+        let new_price = NewPrice::new(crypto_id, self.source_id, 1, latest_price, updated_at);
 
         new_price.insert(&mut connection).await?;
         Ok(())

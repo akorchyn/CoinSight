@@ -4,7 +4,10 @@ members = [
     "backend/common/communication",
     "backend/graphql-api",
     "backend/db",
+    "backend/collectors/common",
     "backend/collectors/chainlink",
+    "backend/collectors/cryptocompare",
+    "backend/collectors/coingecko",
     "backend/aggregator",
 ]
 
@@ -26,6 +29,7 @@ tokio = { version = "1", features = ["full"] }
 reqwest = { version = "0.11", features = ["json", "stream", "trust-dns"] }
 futures = "0.3"
 serde = "1.0"
+serde_json = "1.0"
 
 ## GRPC releated
 tonic = "0.9"
@@ -51,3 +55,4 @@ ethers = { version = "2.0.0", features = ["legacy", "abigen"] }
 # Our crates (CS for Coinsight, B for Backend)
 csb-comm = { path = "backend/common/communication" }
 csb-db = { path = "backend/db" }
+csb-collector-common = { path = "backend/collectors/common" }
