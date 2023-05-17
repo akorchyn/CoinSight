@@ -49,6 +49,18 @@ services:
     environment:
       - NODE_URL=https://eth-rpc.gateway.pokt.network/
       - DATABASE_URL=${DATABASE_URL}
+  aggregator:
+    build:
+      context: .
+      target: aggregator
+    restart: always
+    depends_on:
+      - postgres
+    networks:
+      - network
+    environment:
+      - CURRENCY=USD
+      - DATABASE_URL=${DATABASE_URL}
   frontend:
     restart: always
     build: frontend

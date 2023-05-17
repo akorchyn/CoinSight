@@ -1,3 +1,4 @@
+use crate::schema::aggregated_prices;
 use diesel::prelude::*;
 use diesel_async::AsyncPgConnection;
 use diesel_async::RunQueryDsl;
@@ -52,6 +53,47 @@ impl AggregatedPrice {
             .offset((page * page_size) as i64)
             .limit(page_size as i64)
             .load(connection)
+            .await
+    }
+}
+
+#[derive(Insertable)]
+#[diesel(table_name = aggregated_prices)]
+
+pub struct NewAggregatorPrice {
+    pub crypto_id: i32,
+    pub currency_id: i32,
+    pub median_price: bigdecimal::BigDecimal,
+    pub first_quartile_price: bigdecimal::BigDecimal,
+    pub third_quartile_price: bigdecimal::BigDecimal,
+    pub timestamp: chrono::NaiveDateTime,
+}
+
+impl NewAggregatorPrice {
+    pub fn new(
+        crypto_id: i32,
+        currency_id: i32,
+        median_price: bigdecimal::BigDecimal,
+        first_quartile_price: bigdecimal::BigDecimal,
+        third_quartile_price: bigdecimal::BigDecimal,
+        timestamp: chrono::NaiveDateTime,
+    ) -> Self {
+        Self {
+            crypto_id,
+            currency_id,
+            median_price,
+            first_quartile_price,
+            third_quartile_price,
+            timestamp,
+        }
+    }
+
+    pub async fn save(&self, connection: &mut AsyncPgConnection) -> QueryResult<AggregatedPrice> {
+        use crate::schema::aggregated_prices::dsl::aggregated_prices;
+
+        diesel::insert_into(aggregated_prices)
+            .values(self)
+            .get_result(connection)
             .await
     }
 }

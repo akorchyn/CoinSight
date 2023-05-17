@@ -16,4 +16,16 @@ impl Currency {
 
         currencies.find(id).first(connection).await
     }
+
+    pub async fn by_symbol(
+        connection: &mut AsyncPgConnection,
+        symbol: &str,
+    ) -> QueryResult<Currency> {
+        use crate::schema::currencies::dsl::{currencies, symbol as symbol_column};
+
+        currencies
+            .filter(symbol_column.eq(symbol))
+            .first(connection)
+            .await
+    }
 }

@@ -62,6 +62,12 @@ impl Cryptocurrency {
             .load(connection)
             .await
     }
+
+    pub async fn all(connection: &mut AsyncPgConnection) -> QueryResult<Vec<Cryptocurrency>> {
+        use crate::schema::cryptocurrencies::dsl::cryptocurrencies;
+
+        cryptocurrencies.load(connection).await
+    }
 }
 
 #[graphql_object(context = Context)]

@@ -5,6 +5,7 @@ members = [
     "backend/graphql-api",
     "backend/db",
     "backend/collectors/chainlink",
+    "backend/aggregator",
 ]
 
 
@@ -16,6 +17,7 @@ repository = "http://github.com/akorchyn/coinsight"
 
 [workspace.dependencies]
 # Common
+dotenvy = "0.15.7"
 thiserror = "1.0"
 anyhow = "1.0"
 bigdecimal = "0.3"
@@ -42,7 +44,6 @@ rocket_cors = "0.6.0-alpha2"
 ## Db
 diesel = "2.0"
 diesel-async = "0.2"
-dotenvy = "0.15.7"
 
 ## collectors
 ethers = { version = "2.0.0", features = ["legacy", "abigen"] }

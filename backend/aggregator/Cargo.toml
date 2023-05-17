@@ -1,0 +1,13 @@
+[package]
+name = "price-aggregator"
+version = "0.1.0"
+edition.workspace = true
+
+[dependencies]
+tokio.workspace = true
+dotenvy.workspace = true
+futures.workspace = true
+chrono.workspace = true
+anyhow.workspace = true
+
+csb-db.workspace = true

@@ -13,6 +13,13 @@ diesel::table! {
 }
 
 diesel::table! {
+    aggregator_status (currency_id) {
+        currency_id -> Int4,
+        timestamp -> Timestamp,
+    }
+}
+
+diesel::table! {
     cryptocurrencies (id) {
         id -> Int4,
         name -> Varchar,
@@ -68,6 +75,7 @@ diesel::joinable!(source_crypto_mappings -> sources (source_id));
 
 diesel::allow_tables_to_appear_in_same_query!(
     aggregated_prices,
+    aggregator_status,
     cryptocurrencies,
     currencies,
     prices,

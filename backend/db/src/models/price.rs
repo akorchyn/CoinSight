@@ -97,4 +97,45 @@ impl Price {
             .load(connection)
             .await
     }
+
+    pub async fn get_any_price_between(
+        connection: &mut AsyncPgConnection,
+        crypto_id: i32,
+        currency_id: i32,
+        start: chrono::NaiveDateTime,
+        end: chrono::NaiveDateTime,
+    ) -> QueryResult<Vec<Price>> {
+        use crate::schema::prices::dsl::{
+            crypto_id as crypto_id_column, currency_id as currency_id_column, is_processed, prices,
+            timestamp,
+        };
+
+        prices
+            .filter(crypto_id_column.eq(crypto_id))
+            .filter(currency_id_column.eq(currency_id))
+            .filter(timestamp.between(start, end))
+            .filter(is_processed.eq(false))
+            .order_by(timestamp.asc())
+            .load(connection)
+            .await
+    }
+
+    pub async fn mark_as_processed(
+        connection: &mut AsyncPgConnection,
+        crypto_id: i32,
+        currency_id: i32,
+        price_data: Vec<Price>,
+    ) -> QueryResult<usize> {
+        use crate::schema::prices::dsl::{
+            crypto_id as crypto_id_column, currency_id as currency_id_column, id, is_processed,
+            prices,
+        };
+        diesel::update(prices)
+            .filter(crypto_id_column.eq(crypto_id))
+            .filter(currency_id_column.eq(currency_id))
+            .filter(id.eq_any(price_data.iter().map(|p| p.id).collect::<Vec<i32>>()))
+            .set(is_processed.eq(true))
+            .execute(connection)
+            .await
+    }
 }

@@ -3,7 +3,7 @@ use diesel_async::{
     AsyncPgConnection,
 };
 
-use error::Error;
+pub use error::Error;
 
 pub use diesel;
 

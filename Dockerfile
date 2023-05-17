@@ -16,3 +16,8 @@ RUN update-ca-certificates
 ENV SSL_CERT_FILE=/etc/ssl/certs/ca-certificates.crt
 COPY --from=builder ./target/release/chainlink-collector ./app/chainlink-collector
 CMD ["/app/chainlink-collector"]
+
+FROM debian:latest as aggregator
+RUN apt update -y && apt install -y libpq-dev
+COPY --from=builder ./target/release/price-aggregator ./app/price-aggregator
+CMD ["/app/price-aggregator"]
