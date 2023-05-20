@@ -2,13 +2,10 @@ import React from 'react';
 import { Card } from 'antd';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowTrendUp, faArrowTrendDown } from '@fortawesome/free-solid-svg-icons';
-import useDynamicSvgImport from "react-crypto-icons";
 import './CryptoCurrencyCard.css';
+import Price from './Price';
 
 const CryptoCurrencyCard = ({ assetName, symbol, currentPrice, previousPrice }) => {
-    const isPriceUp = currentPrice > previousPrice;
-    const priceColor = isPriceUp ? 'text-success' : 'text-danger';
-    const arrowIcon = isPriceUp ? faArrowTrendUp : faArrowTrendDown;
 
     return (
         <Card className="crypto-card" hoverable type="inner">
@@ -19,12 +16,7 @@ const CryptoCurrencyCard = ({ assetName, symbol, currentPrice, previousPrice }) 
                     <p>{assetName} <span className="symbol-text">{symbol}</span></p>
                 </div>
 
-                <div className="crypto-price">
-                    <p className={priceColor}>
-                        <span>${parseFloat(currentPrice).toFixed(2)}</span>
-                        <FontAwesomeIcon icon={arrowIcon} />
-                    </p>
-                </div>
+                <Price price={currentPrice} float_point={3} isPriceUp={currentPrice != previousPrice ? currentPrice > previousPrice : undefined} />
             </div>
         </Card >
     );

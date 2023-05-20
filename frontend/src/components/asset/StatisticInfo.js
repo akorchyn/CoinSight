@@ -1,23 +1,19 @@
 import React from "react";
 import numeral from "numeral";
+import "./StatisticInfo.css";
+import Price from "../common/Price";
 
 function AssetInfo({ assetData }) {
-  const { name, description, medianPrice, firstQuartilePrice, thirdQuartilePrice } = assetData;
+  const { name, symbol, description, medianPrice, firstQuartilePrice, thirdQuartilePrice } = assetData;
   return (
-    <div>
-      <h1>{name}</h1>
-      <p>{description}</p>
-      <p>Median Value: {numeral(medianPrice).format("$0,0.00")}</p>
-      <p>
-        Quartiles:{" "}
-        <span>
-          Q1: {numeral(firstQuartilePrice).format("$0,0.00")}
-        </span>
-        {" "}
-        <span>
-          Q3: {numeral(thirdQuartilePrice).format("$0,0.00")}
-        </span>
-      </p>
+    <div className="wrapper">
+      <h1 className="asset-name">{name}<span className="asset-symbol">{symbol}</span></h1>
+      <p className="description">{description}</p>
+      <div className="price-info-wrapper">
+        <Price price={firstQuartilePrice} tooltip="Q1" minWidth={200} />
+        <Price price={medianPrice} tooltip="Median Value" minWidth={200} />
+        <Price price={thirdQuartilePrice} tooltip="Q3" minWidth={200} />
+      </div>
       {/* Add other relevant information here */}
     </div>
   );

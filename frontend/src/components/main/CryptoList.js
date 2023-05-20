@@ -13,7 +13,7 @@ const CryptoList = ({ cryptos }) => {
 
                     const asset = cryptos[key];
                     const current_price = asset.aggregatedHistory[0]?.medianPrice || 0;
-                    const previousPrice = asset.aggregatedHistory[1]?.medianPrice || 0;
+                    const previousPrice = asset.aggregatedHistory.slice().find((elem) => elem.medianPrice != current_price).medianPrice || 0;
 
                     return (
                         <Link key={asset.symbol} to={`/asset/${asset.symbol}`} style={{ textDecoration: 'none' }}>

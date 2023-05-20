@@ -5,6 +5,7 @@ import { Input, SIZE } from "baseui/input";
 import './Search.css';
 import CryptoCurrencyCard from "./CryptoCurrencyCard";
 import { Link } from "react-router-dom";
+import Loading from "./Loading";
 
 const SEARCH_QUERY = gql`
   query Search($query: String!) {
@@ -22,6 +23,8 @@ const Search = () => {
     const [value, setValue] = useState("");
     const { loading, error, data } = useQuery(SEARCH_QUERY, {
         variables: { query: value.trim() },
+        skip: value.trim().length === 0,
+        pollInterval: 60000,
     });
 
     const result = data?.search;
@@ -41,7 +44,7 @@ const Search = () => {
                 clearOnEscape
             />
             <div className="searchResults">
-                {loading && <p>Loading...</p>}
+                {loading && <Loading />}
                 {error && <p>Error: {error.message}</p>}
                 {value.length > 0 && result && result.length == 0 && <p>No results</p>}
                 {value.length > 0 && result && result.length > 0 && (
