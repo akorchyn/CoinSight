@@ -10,7 +10,7 @@ const GRAPHQL_REQUEST = gql`
         topCryptocurrencies {
             symbol,
             name,
-            aggregatedHistory {
+            aggregatedHistory(limit: 10) {
                 medianPrice
             },
         }
@@ -19,7 +19,7 @@ const GRAPHQL_REQUEST = gql`
 
 const MainPage = () => {
     const { loading, error, data } = useQuery(GRAPHQL_REQUEST, {
-        pollInterval: 60000,
+        pollInterval: 5000,
     });
 
     if (loading) return <Loading />;

@@ -46,7 +46,7 @@ const AssetPage = () => {
   const { symbol } = useParams();
   const { loading, error, data } = useQuery(GRAPHQL_REQUEST, {
     variables: { symbol },
-    pollInterval: 60000,
+    pollInterval: 5000,
   });
 
 
