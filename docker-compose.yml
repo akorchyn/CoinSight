@@ -71,6 +71,17 @@ services:
       - network
     environment:
       - DATABASE_URL=${DATABASE_URL}
+  gateio-collector:
+    build:
+      context: .
+      target: gateio-collector
+    restart: always
+    depends_on:
+      - postgres
+    networks:
+      - network
+    environment:
+      - DATABASE_URL=${DATABASE_URL}
   aggregator:
     build:
       context: .

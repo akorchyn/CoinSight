@@ -41,13 +41,17 @@ impl Collector {
         for crypto in &self.required_keys {
             let price = self
                 .helper
-                .retrieve_price_from_json(&json, &crypto.source_key)
-                .context("Failed to get price")?;
+                .retrieve_price_from_json(&json, &crypto.source_key);
+            if let Err(e) = price {
+                error = true;
+                eprintln!("Failed to retrieve price: {e}");
+                continue;
+            }
             let price = csb_db::models::NewPrice::new(
                 crypto.crypto_id,
                 self.source_id,
                 self.currency_id,
-                price,
+                price.unwrap(), // Safe to unwrap because we checked for error above
                 timestamp,
             );
             if let Err(e) = price.insert(&mut connection).await {

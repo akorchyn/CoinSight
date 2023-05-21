@@ -1761,6 +1761,19 @@ dependencies = [
 ]
 
 [[package]]
+name = "gateio-collector"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "bigdecimal",
+ "csb-collector-common",
+ "csb-db",
+ "dotenvy",
+ "serde_json",
+ "tokio",
+]
+
+[[package]]
 name = "generator"
 version = "0.7.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"

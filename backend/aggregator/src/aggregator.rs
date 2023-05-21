@@ -40,7 +40,7 @@ impl Aggregator {
 
         let median = prices[prices.len() / 2].price.clone();
         let first_quartile = prices[prices.len() / 4].price.clone();
-        let third_quartile = prices[prices.len() * 3 / 4].price.clone();
+        let third_quartile = prices[(prices.len() * 3) / 4].price.clone();
         let aggregated_price = NewAggregatorPrice::new(
             crypto.id,
             self.currency_id,

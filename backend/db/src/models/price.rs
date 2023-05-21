@@ -4,7 +4,7 @@ use diesel_async::AsyncPgConnection;
 use diesel_async::RunQueryDsl;
 use juniper::GraphQLObject;
 
-#[derive(Queryable, GraphQLObject)]
+#[derive(Queryable, GraphQLObject, Debug)]
 pub struct Price {
     pub id: i32,
     pub crypto_id: i32,
@@ -107,8 +107,8 @@ impl Price {
         end: chrono::NaiveDateTime,
     ) -> QueryResult<Vec<Price>> {
         use crate::schema::prices::dsl::{
-            crypto_id as crypto_id_column, currency_id as currency_id_column, is_processed, prices,
-            timestamp,
+            crypto_id as crypto_id_column, currency_id as currency_id_column, is_processed, price,
+            prices, timestamp,
         };
 
         prices
@@ -116,7 +116,7 @@ impl Price {
             .filter(currency_id_column.eq(currency_id))
             .filter(timestamp.between(start, end))
             .filter(is_processed.eq(false))
-            .order_by(timestamp.desc())
+            .order_by(price.asc())
             .load(connection)
             .await
     }

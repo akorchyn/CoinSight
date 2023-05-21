@@ -8,6 +8,7 @@ members = [
     "backend/collectors/chainlink",
     "backend/collectors/cryptocompare",
     "backend/collectors/coingecko",
+    "backend/collectors/gateio",
     "backend/aggregator",
 ]
 
