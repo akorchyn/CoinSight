@@ -13,16 +13,19 @@ const GRAPHQL_REQUEST = gql`
 query getCrypto($symbol: String!) {
   crypto {
     bySymbol(symbol: $symbol) {
+      id
       symbol
       name
       description
       latestAggregatedPrice {
+        id
         medianPrice
         firstQuartilePrice
         thirdQuartilePrice
         timestamp
       }
       aggregatedHistory {
+        id
         medianPrice
         firstQuartilePrice
         thirdQuartilePrice

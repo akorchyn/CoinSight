@@ -8,6 +8,10 @@ pub struct Cryptocurrency(pub csb_db_crypto::models::Cryptocurrency);
 
 #[graphql_object(context = Context)]
 impl Cryptocurrency {
+    fn id(&self) -> i32 {
+        self.0.id
+    }
+
     fn name(&self) -> &str {
         &self.0.name
     }
@@ -92,6 +96,10 @@ pub struct AggregatedPrice(pub csb_db_crypto::models::AggregatedPrice);
 
 #[graphql_object]
 impl AggregatedPrice {
+    fn id(&self) -> i32 {
+        self.0.id
+    }
+
     fn median_price(&self) -> &BigDecimal {
         &self.0.median_price
     }
@@ -113,6 +121,10 @@ pub struct Price(pub csb_db_crypto::models::Price);
 
 #[graphql_object]
 impl Price {
+    fn id(&self) -> i32 {
+        self.0.id
+    }
+
     fn price(&self) -> &BigDecimal {
         &self.0.price
     }

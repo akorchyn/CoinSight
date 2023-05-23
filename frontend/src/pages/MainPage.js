@@ -9,6 +9,7 @@ const GRAPHQL_REQUEST = gql`
     query getTopCryptos {
         crypto {
             top {
+                id
                 symbol
                 name
                 aggregatedHistory(limit: 10) {

@@ -1,3 +1,5 @@
+use juniper::graphql_value;
+
 pub mod mutation;
 pub mod query;
 pub mod types;
@@ -35,3 +37,12 @@ pub type Schema = juniper::RootNode<
     mutation::Mutation,
     juniper::EmptySubscription<Context>,
 >;
+
+fn grpc_error_to_field_error(e: tonic::Status) -> juniper::FieldError {
+    juniper::FieldError::new(
+        e.message().to_string(),
+        graphql_value!({
+            "code": e.code().to_string()
+        }),
+    )
+}

@@ -1,5 +1,4 @@
 import React from "react";
-import numeral from "numeral";
 import "./StatisticInfo.css";
 import Price from "../common/Price";
 

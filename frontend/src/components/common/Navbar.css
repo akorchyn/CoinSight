@@ -4,16 +4,30 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background-color: #333;
+    background: #333333;
     padding: 0.5rem 1rem;
     font-size: 1.2rem;
     color: #f1f1f1;
+    gap: 2rem;
+}
+
+.logo-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.logo-icon {
+    border-radius: 50%;
+    height: 50px;
+    width: 50px;
 }
 
 .navbar .logo,
 .navbar .navItem {
     color: #f1f1f1;
     text-decoration: none;
+
 }
 
 .navbar .navItem:hover {

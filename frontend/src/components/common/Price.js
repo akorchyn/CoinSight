@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Card, StyledBody, StyledRoot } from 'baseui/card';
+import { Card } from 'baseui/card';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowTrendUp, faArrowTrendDown } from '@fortawesome/free-solid-svg-icons';
 
@@ -29,7 +29,7 @@ const Price = ({ price, tooltip, isPriceUp, color, size, float_point, minWidth }
             overrides={{
                 Root: {
                     style: {
-                        width: prop_size, height: prop_size, background: '#333', minWidth: minWidth + 'px'
+                        width: prop_size, height: prop_size, backgroundColor: '#333333', minWidth: minWidth + 'px'
                     }
                 },
                 Title: {

@@ -13,6 +13,7 @@ import { Client as Styletron } from 'styletron-engine-atomic';
 import { Provider as StyletronProvider } from 'styletron-react';
 import { DarkTheme, BaseProvider, styled } from 'baseui';
 import Login from './pages/Login';
+import Registration from './pages/Registration';
 
 const client = new ApolloClient({
   uri: process.env.REACT_APP_API_ENDPOINT,
@@ -31,7 +32,7 @@ function App() {
         <BaseProvider theme={DarkTheme}>
           <ConfigProvider theme={{
             token: {
-              colorBgBase: '#333'
+              colorBgBase: '#333333'
             },
           }}>
             <Router>
@@ -43,6 +44,7 @@ function App() {
                   <Route path="/asset/:symbol" element={<AssetPage />} />
                   <Route path="/alerts" element={<Alerts />} />
                   <Route path="/login" element={<Login />} />
+                  <Route path="/register" element={<Registration />} />
                 </Routes>
                 <Footer />
               </div>

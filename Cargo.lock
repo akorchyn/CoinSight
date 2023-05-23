@@ -4832,6 +4832,7 @@ dependencies = [
  "rust-argon2",
  "serde",
  "sha2 0.10.6",
+ "thiserror",
  "tokio",
  "tonic",
 ]

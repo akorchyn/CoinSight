@@ -38,6 +38,7 @@ diesel::table! {
 diesel::table! {
     users (id) {
         id -> Int4,
+        login -> Varchar,
         email -> Varchar,
         password_hash -> Varchar,
         default_notification_method -> Varchar,

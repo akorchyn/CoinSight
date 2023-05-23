@@ -7,6 +7,7 @@ use crate::schema::users;
 #[derive(Queryable)]
 pub struct User {
     pub id: i32,
+    pub login: String,
     pub email: String,
     pub password_hash: String,
     pub default_notification_method: String,
@@ -27,11 +28,25 @@ impl User {
             .await
             .optional()
     }
+
+    pub async fn by_login(
+        connection: &mut AsyncPgConnection,
+        login: &str,
+    ) -> QueryResult<Option<Self>> {
+        use crate::schema::users::dsl::{login as login_column, users};
+
+        users
+            .filter(login_column.eq(login))
+            .first(connection)
+            .await
+            .optional()
+    }
 }
 
 #[derive(Insertable)]
 #[diesel(table_name = users)]
 pub struct NewUser {
+    pub login: String,
     pub email: String,
     pub password_hash: String,
     pub default_notification_method: String,
@@ -43,6 +58,7 @@ impl NewUser {
 
         diesel::insert_into(users)
             .values(self)
+            .on_conflict_do_nothing()
             .execute(connection)
             .await
     }

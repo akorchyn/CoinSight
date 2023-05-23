@@ -43,7 +43,7 @@ impl csb_comm::user_service_server::UserService for UserService {
         let result = argon2::verify_encoded(&user.password_hash, password.as_bytes())
             .map_err(|_| Status::internal("Error while verifying password hash"))?;
         if !result {
-            return Err(Status::unauthenticated("Wrong password"));
+            return Err(Status::unauthenticated("Incorrect email/password"));
         }
 
         let login_response = create_token_for_user(user.id, &self.key, &mut connection).await?;
@@ -51,7 +51,11 @@ impl csb_comm::user_service_server::UserService for UserService {
     }
 
     async fn register(&self, request: Request<Register>) -> Result<Response<()>, Status> {
-        let Register { email, password } = request.into_inner();
+        let Register {
+            login,
+            email,
+            password,
+        } = request.into_inner();
         if !check_if_mail_is_valid(&email) {
             return Err(Status::invalid_argument("Invalid email"));
         }
@@ -64,6 +68,7 @@ impl csb_comm::user_service_server::UserService for UserService {
                 .map_err(|_| Status::internal("Error while hashing password"))?;
 
         let new_user = csb_db_user::models::NewUser {
+            login,
             email,
             password_hash,
             default_notification_method: "".to_string(),
@@ -74,10 +79,34 @@ impl csb_comm::user_service_server::UserService for UserService {
             .get()
             .await
             .map_err(|_| Status::internal("Error while getting connection from the pool"))?;
-        new_user
+
+        if csb_db_user::models::User::by_email(&mut connection, &new_user.email)
+            .await
+            .map_err(|_| Status::internal("Database failure"))?
+            .is_some()
+        {
+            return Err(Status::already_exists(
+                "User with this email already exists",
+            ));
+        }
+
+        if csb_db_user::models::User::by_login(&mut connection, &new_user.login)
+            .await
+            .map_err(|_| Status::internal("Database failure"))?
+            .is_some()
+        {
+            return Err(Status::already_exists(
+                "User with this login already exists",
+            ));
+        }
+
+        let updated_rows = new_user
             .insert(&mut connection)
             .await
-            .map_err(|_| Status::internal("Error while inserting new user into the database"))?;
+            .map_err(|_| Status::internal("Failed to insert into database"))?;
+        if updated_rows == 0 {
+            return Err(Status::internal("Failed to insert into database"));
+        }
 
         Ok(tonic::Response::new(()))
     }

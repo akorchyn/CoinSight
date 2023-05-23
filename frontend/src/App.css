@@ -1,5 +1,5 @@
 body {
-  background-color: #232323;
+  background: #232323;
   background-image: radial-gradient(#424242 1px, transparent 1px), radial-gradient(#424242 1px, transparent 1px);
   background-size: 20px 20px;
   background-position: 0 0, 10px 10px;
@@ -15,6 +15,12 @@ body {
   left: 50%;
   transform: translate(-50%, -50%);
   opacity: 25%;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 }
 
 .App {
@@ -33,7 +39,7 @@ body {
 }
 
 .App-header {
-  background-color: #282c34;
+  background: #282c34;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
