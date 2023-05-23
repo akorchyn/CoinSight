@@ -15,4 +15,4 @@ dotenvy.workspace = true
 chrono.workspace = true
 bigdecimal.workspace = true
 
-csb-db.workspace = true
+csb-db-crypto.workspace = true

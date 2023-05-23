@@ -77,6 +77,12 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "7de8ce5e0f9f8d88245311066a578d72b7af3e7088f32783804676302df237e4"
 
 [[package]]
+name = "arrayref"
+version = "0.3.7"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "6b4930d2cb77ce62f89ee5d5289b4ac049559b1c45539271f5ed4fdc7db34545"
+
+[[package]]
 name = "arrayvec"
 version = "0.7.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -343,6 +349,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "blake2b_simd"
+version = "1.0.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "3c2f0dc9a68c6317d884f97cc36cf5a3d20ba14ce404227df55e1af708ab04bc"
+dependencies = [
+ "arrayref",
+ "arrayvec",
+ "constant_time_eq 0.2.5",
+]
+
+[[package]]
 name = "block-buffer"
 version = "0.9.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -493,7 +510,7 @@ dependencies = [
  "anyhow",
  "bigdecimal",
  "chrono",
- "csb-db",
+ "csb-db-crypto",
  "dotenvy",
  "ethers",
  "futures",
@@ -583,7 +600,7 @@ dependencies = [
  "anyhow",
  "bigdecimal",
  "csb-collector-common",
- "csb-db",
+ "csb-db-crypto",
  "dotenvy",
  "serde_json",
  "tokio",
@@ -696,6 +713,12 @@ name = "constant_time_eq"
 version = "0.1.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "245097e9a4535ee1e3e3931fcfcd55a796a44c643e8596ff6566d68f09b87bbc"
+
+[[package]]
+name = "constant_time_eq"
+version = "0.2.5"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "13418e745008f7349ec7e449155f419a61b92b58a99cc3616942b926825ec76b"
 
 [[package]]
 name = "cookie"
@@ -820,7 +843,7 @@ dependencies = [
  "anyhow",
  "bigdecimal",
  "csb-collector-common",
- "csb-db",
+ "csb-db-crypto",
  "dotenvy",
  "serde_json",
  "tokio",
@@ -833,7 +856,7 @@ dependencies = [
  "anyhow",
  "bigdecimal",
  "chrono",
- "csb-db",
+ "csb-db-crypto",
  "reqwest",
  "serde",
  "serde_json",
@@ -851,7 +874,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "csb-db"
+name = "csb-db-crypto"
 version = "0.1.0"
 dependencies = [
  "anyhow",
@@ -859,7 +882,18 @@ dependencies = [
  "chrono",
  "diesel",
  "diesel-async",
- "juniper",
+ "thiserror",
+]
+
+[[package]]
+name = "csb-db-user"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "bigdecimal",
+ "chrono",
+ "diesel",
+ "diesel-async",
  "thiserror",
 ]
 
@@ -867,12 +901,18 @@ dependencies = [
 name = "csb-grapql-lib"
 version = "0.1.0"
 dependencies = [
- "csb-db",
+ "bigdecimal",
+ "chrono",
+ "csb-comm",
+ "csb-db-crypto",
+ "csb-db-user",
  "dotenvy",
+ "hyper",
  "juniper",
  "juniper_rocket",
  "rocket",
  "rocket_cors",
+ "tonic",
 ]
 
 [[package]]
@@ -1767,7 +1807,7 @@ dependencies = [
  "anyhow",
  "bigdecimal",
  "csb-collector-common",
- "csb-db",
+ "csb-db-crypto",
  "dotenvy",
  "serde_json",
  "tokio",
@@ -2301,6 +2341,21 @@ dependencies = [
  "rocket",
  "serde_json",
  "tempfile",
+]
+
+[[package]]
+name = "jwt"
+version = "0.16.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "6204285f77fe7d9784db3fdc449ecce1a0114927a51d5a41c4c7a292011c015f"
+dependencies = [
+ "base64 0.13.1",
+ "crypto-common",
+ "digest 0.10.6",
+ "hmac",
+ "serde",
+ "serde_json",
+ "sha2 0.10.6",
 ]
 
 [[package]]
@@ -3025,7 +3080,7 @@ version = "0.1.0"
 dependencies = [
  "anyhow",
  "chrono",
- "csb-db",
+ "csb-db-crypto",
  "dotenvy",
  "futures",
  "tokio",
@@ -3522,6 +3577,18 @@ dependencies = [
  "time 0.3.21",
  "tokio",
  "uncased",
+]
+
+[[package]]
+name = "rust-argon2"
+version = "1.0.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b50162d19404029c1ceca6f6980fe40d45c8b369f6f44446fa14bb39573b5bb9"
+dependencies = [
+ "base64 0.13.1",
+ "blake2b_simd",
+ "constant_time_eq 0.1.5",
+ "crossbeam-utils",
 ]
 
 [[package]]
@@ -4751,6 +4818,25 @@ dependencies = [
 ]
 
 [[package]]
+name = "user-service"
+version = "0.1.0"
+dependencies = [
+ "chrono",
+ "csb-comm",
+ "csb-db-user",
+ "diesel",
+ "dotenvy",
+ "hmac",
+ "jwt",
+ "rand",
+ "rust-argon2",
+ "serde",
+ "sha2 0.10.6",
+ "tokio",
+ "tonic",
+]
+
+[[package]]
 name = "utf-8"
 version = "0.7.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -5211,7 +5297,7 @@ dependencies = [
  "aes 0.7.5",
  "byteorder",
  "bzip2",
- "constant_time_eq",
+ "constant_time_eq 0.1.5",
  "crc32fast",
  "crossbeam-utils",
  "flate2",

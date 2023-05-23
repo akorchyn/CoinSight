@@ -3,13 +3,15 @@
 members = [
     "backend/common/communication",
     "backend/graphql-api",
-    "backend/db",
+    "backend/db/crypto",
+    "backend/db/user",
     "backend/collectors/common",
     "backend/collectors/chainlink",
     "backend/collectors/cryptocompare",
     "backend/collectors/coingecko",
     "backend/collectors/gateio",
     "backend/aggregator",
+    "backend/user-service",
 ]
 
 
@@ -41,6 +43,7 @@ prost-types = "0.11"
 ## GraphQL releated
 juniper = { git = "https://github.com/graphql-rust/juniper.git", branch = "master" }
 juniper_rocket = { git = "https://github.com/graphql-rust/juniper.git", branch = "master" }
+hyper = { version = "0.14", features = ["client"] }
 
 ## Web releated
 rocket = { version = "0.5.0-rc.3", default-features = false }
@@ -53,7 +56,15 @@ diesel-async = "0.2"
 ## collectors
 ethers = { version = "2.0.0", features = ["legacy", "abigen"] }
 
+## User service
+rust-argon2 = "1.0" # Argon2 password hashing
+rand = "0.8"        # Random salt generator
+hmac = "0.12"
+jwt = "0.16"
+sha2 = "0.10"
+
 # Our crates (CS for Coinsight, B for Backend)
 csb-comm = { path = "backend/common/communication" }
-csb-db = { path = "backend/db" }
+csb-db-crypto = { path = "backend/db/crypto" }
+csb-db-user = { path = "backend/db/user" }
 csb-collector-common = { path = "backend/collectors/common" }

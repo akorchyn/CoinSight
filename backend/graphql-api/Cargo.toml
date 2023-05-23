@@ -14,5 +14,11 @@ juniper_rocket.workspace = true
 rocket.workspace = true
 rocket_cors.workspace = true
 dotenvy.workspace = true
+tonic.workspace = true
+chrono.workspace = true
+bigdecimal.workspace = true
+hyper.workspace = true
 
-csb-db.workspace = true
+csb-db-crypto.workspace = true
+csb-db-user.workspace = true
+csb-comm.workspace = true

@@ -33,3 +33,7 @@ CMD ["/app/gateio-collector"]
 FROM runner as aggregator
 COPY --from=builder ./target/release/price-aggregator ./app/price-aggregator
 CMD ["/app/price-aggregator"]
+
+FROM runner as user-service
+COPY --from=builder ./target/release/user-service ./app/user-service
+CMD ["/app/user-service"]

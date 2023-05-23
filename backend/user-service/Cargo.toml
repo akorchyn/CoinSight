@@ -1,0 +1,20 @@
+[package]
+name = "user-service"
+version = "0.1.0"
+edition = "2021"
+
+
+[dependencies]
+csb-comm.workspace = true
+csb-db-user.workspace = true
+tonic.workspace = true
+rust-argon2.workspace = true
+rand.workspace = true
+hmac.workspace = true
+jwt.workspace = true
+sha2.workspace = true
+serde.workspace = true
+chrono.workspace = true
+tokio.workspace = true
+dotenvy.workspace = true
+diesel.workspace = true

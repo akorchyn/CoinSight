@@ -3,7 +3,7 @@ use std::str::FromStr;
 use anyhow::Context;
 use bigdecimal::BigDecimal;
 use csb_collector_common::CollectorHelper;
-use csb_db::models::SourceCryptoMapping;
+use csb_db_crypto::models::SourceCryptoMapping;
 
 struct Urly {}
 impl CollectorHelper for Urly {

@@ -3,9 +3,9 @@ use std::{sync::Arc, time::Duration};
 use anyhow::Context as ErrorContext;
 use bigdecimal::num_bigint::BigInt;
 use chrono::NaiveDateTime;
-use csb_db::{
+use csb_db_crypto::{
     models::{NewPrice, SourceCryptoMapping},
-    Context,
+    Db,
 };
 use ethers::{
     prelude::Http,
@@ -29,7 +29,7 @@ mod chain_link_abi {
 /// The price oracle. It fetches prices from the chainlink oracle contracts on the Ethereum network.
 pub struct Collector {
     provider: Arc<Provider<Http>>,
-    db_context: Context,
+    db_context: Db,
     source_id: i32,
     data: Vec<(TokenId, H160)>,
 }
@@ -39,7 +39,7 @@ impl Collector {
     pub async fn new(
         ethereum_node: Url,
         input: Vec<SourceCryptoMapping>,
-        db_context: Context,
+        db_context: Db,
     ) -> Result<Self, CollectorError> {
         let provider =
             Provider::<Http>::try_from(ethereum_node.to_string()).with_context(|| {

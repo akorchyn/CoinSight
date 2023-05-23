@@ -8,15 +8,17 @@ import { Link } from "react-router-dom";
 import Loading from "./Loading";
 
 const SEARCH_QUERY = gql`
-  query Search($query: String!) {
-    search(query: $query) {
-        name
-        symbol
-        aggregatedHistory(limit: 2) {
-            medianPrice
+    query Search($query: String!) {
+        crypto {
+            search(query: $query) {
+                name
+                symbol
+                aggregatedHistory(limit: 2) {
+                    medianPrice
+                }
+            }
         }
-    }
-  }
+    }  
 `;
 
 const Search = () => {
@@ -27,7 +29,7 @@ const Search = () => {
         pollInterval: 60000,
     });
 
-    const result = data?.search;
+    const result = data?.crypto.search;
 
     const onInput = (e) => {
         setValue(e.target.value);

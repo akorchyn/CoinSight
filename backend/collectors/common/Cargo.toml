@@ -13,4 +13,4 @@ serde.workspace = true
 serde_json.workspace = true
 tokio.workspace = true
 
-csb-db.workspace = true
+csb-db-crypto.workspace = true

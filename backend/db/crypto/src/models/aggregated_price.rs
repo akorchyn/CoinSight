@@ -2,9 +2,8 @@ use crate::schema::aggregated_prices;
 use diesel::prelude::*;
 use diesel_async::AsyncPgConnection;
 use diesel_async::RunQueryDsl;
-use juniper::GraphQLObject;
 
-#[derive(Queryable, GraphQLObject)]
+#[derive(Queryable)]
 pub struct AggregatedPrice {
     pub id: i32,
     pub crypto_id: i32,

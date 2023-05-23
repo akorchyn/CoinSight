@@ -7,12 +7,14 @@ import Loading from '../components/common/Loading';
 
 const GRAPHQL_REQUEST = gql`
     query getTopCryptos {
-        topCryptocurrencies {
-            symbol,
-            name,
-            aggregatedHistory(limit: 10) {
-                medianPrice
-            },
+        crypto {
+            top {
+                symbol
+                name
+                aggregatedHistory(limit: 10) {
+                    medianPrice
+                }
+            }
         }
     }
 `;
@@ -25,7 +27,7 @@ const MainPage = () => {
     if (loading) return <Loading />;
     if (error) return <p>Error: {error.message}</p>;
 
-    const cryptos = data?.topCryptocurrencies;
+    const cryptos = data?.crypto.top;
 
     return (
         <div>

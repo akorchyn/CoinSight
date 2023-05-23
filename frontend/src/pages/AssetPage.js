@@ -10,22 +10,27 @@ import Loading from '../components/common/Loading';
 
 
 const GRAPHQL_REQUEST = gql`
-  query getCrypto($symbol: String!) {
-    cryptocurrency(symbol: $symbol) {
-      symbol,
-      name,
-      description,
+query getCrypto($symbol: String!) {
+  crypto {
+    bySymbol(symbol: $symbol) {
+      symbol
+      name
+      description
       latestAggregatedPrice {
-        medianPrice,
-        firstQuartilePrice,
-        thirdQuartilePrice,
+        medianPrice
+        firstQuartilePrice
+        thirdQuartilePrice
         timestamp
-      },
-      aggregatedHistory {
-        medianPrice, firstQuartilePrice, thirdQuartilePrice, timestamp
       }
-    },
+      aggregatedHistory {
+        medianPrice
+        firstQuartilePrice
+        thirdQuartilePrice
+        timestamp
+      }
+    }
   }
+}
 `;
 
 const AssetPage = () => {
@@ -58,7 +63,7 @@ const AssetPage = () => {
     return <p>Error: {error.message}</p>;
   }
 
-  const cryptocurrency = data?.cryptocurrency;
+  const cryptocurrency = data?.crypto.bySymbol;
 
   const priceInfo = cryptocurrency.latestAggregatedPrice;
   const history = cryptocurrency.aggregatedHistory.slice().map((value) => ({

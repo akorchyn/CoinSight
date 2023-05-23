@@ -1,9 +1,8 @@
 use diesel::prelude::*;
 use diesel_async::AsyncPgConnection;
 use diesel_async::RunQueryDsl;
-use juniper::GraphQLObject;
 
-#[derive(Queryable, GraphQLObject)]
+#[derive(Queryable)]
 pub struct Source {
     pub id: i32,
     pub name: String,
@@ -23,7 +22,7 @@ impl Source {
     }
 }
 
-#[derive(Queryable, GraphQLObject, Clone)]
+#[derive(Queryable, Clone)]
 pub struct SourceCryptoMapping {
     pub id: i32,
     pub crypto_id: i32,

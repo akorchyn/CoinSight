@@ -1,0 +1,32 @@
+syntax = "proto3";
+
+package coin_sight;
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+
+service UserService {
+    rpc login(Login) returns (LoginResponse);
+    rpc logout(Token) returns (google.protobuf.Empty);
+    rpc register(Register) returns (google.protobuf.Empty);
+    rpc refresh_token(Token) returns (LoginResponse);
+    rpc validate_token(Token) returns (google.protobuf.Empty);
+}
+
+message Login {
+    string email = 1;
+    string password = 2;
+}
+
+message Register {
+    string email = 1;
+    string password = 2;
+}
+
+message Token {
+    string token = 1;
+}
+
+message LoginResponse {
+    string token = 1;
+    int64 expires_at = 2;
+}

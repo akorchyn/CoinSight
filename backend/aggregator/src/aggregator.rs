@@ -1,15 +1,15 @@
-use csb_db::models::{AggregatorStatus, Cryptocurrency, NewAggregatorPrice, Price};
+use csb_db_crypto::models::{AggregatorStatus, Cryptocurrency, NewAggregatorPrice, Price};
 use futures::future::join_all;
 
 pub(crate) struct Aggregator {
-    context: csb_db::Context,
+    context: csb_db_crypto::Db,
     currency_id: i32,
     process_currencies: Vec<Cryptocurrency>,
 }
 
 impl Aggregator {
     pub(crate) fn new(
-        context: csb_db::Context,
+        context: csb_db_crypto::Db,
         currency_id: i32,
         process_currencies: Vec<Cryptocurrency>,
     ) -> Self {
@@ -26,7 +26,7 @@ impl Aggregator {
         update_time: chrono::NaiveDateTime,
     ) -> anyhow::Result<()> {
         let mut connection = self.context.db_connection.get().await?;
-        let prices = csb_db::models::Price::get_any_price_between(
+        let prices = csb_db_crypto::models::Price::get_any_price_between(
             &mut connection,
             crypto.id,
             self.currency_id,
@@ -57,10 +57,12 @@ impl Aggregator {
 
     async fn update_time(&self, time: chrono::NaiveDateTime) -> anyhow::Result<AggregatorStatus> {
         let mut connection = self.context.db_connection.get().await?;
-        Ok(
-            csb_db::models::AggregatorStatus::update_time(&mut connection, self.currency_id, time)
-                .await?,
+        Ok(csb_db_crypto::models::AggregatorStatus::update_time(
+            &mut connection,
+            self.currency_id,
+            time,
         )
+        .await?)
     }
 
     pub(crate) async fn run(&self) {
@@ -75,7 +77,7 @@ impl Aggregator {
                 .await
                 .expect("Failed to connect to db");
 
-            csb_db::models::AggregatorStatus::by_crypto_id_and_currency_id(
+            csb_db_crypto::models::AggregatorStatus::by_crypto_id_and_currency_id(
                 &mut connection,
                 self.currency_id,
             )

@@ -2,9 +2,8 @@ use crate::schema::*;
 use diesel::prelude::*;
 use diesel_async::AsyncPgConnection;
 use diesel_async::RunQueryDsl;
-use juniper::GraphQLObject;
 
-#[derive(Queryable, GraphQLObject, Debug)]
+#[derive(Queryable, Debug)]
 pub struct Price {
     pub id: i32,
     pub crypto_id: i32,

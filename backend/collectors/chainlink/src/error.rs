@@ -19,5 +19,5 @@ pub enum CollectorError {
     NegativeLatestPrice(String),
 
     #[error(transparent)]
-    DbError(#[from] csb_db::diesel::result::Error),
+    DbError(#[from] csb_db_crypto::diesel::result::Error),
 }

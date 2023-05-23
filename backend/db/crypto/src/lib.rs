@@ -13,15 +13,13 @@ pub mod schema;
 
 pub type DbPool = Pool<AsyncPgConnection>;
 
-pub struct Context {
+pub struct Db {
     pub db_connection: DbPool,
 }
 
-impl juniper::Context for Context {}
-
-impl Context {
-    pub async fn new(connection_string: String) -> Result<Context, Error> {
-        Ok(Context {
+impl Db {
+    pub async fn new(connection_string: String) -> Result<Db, Error> {
+        Ok(Db {
             db_connection: establish_pool_connection(connection_string).await?,
         })
     }

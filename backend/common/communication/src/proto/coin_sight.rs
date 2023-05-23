@@ -1,25 +1,43 @@
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
-pub struct PriceUpdate {
+pub struct Login {
     #[prost(string, tag = "1")]
-    pub token_name: ::prost::alloc::string::String,
+    pub email: ::prost::alloc::string::String,
     #[prost(string, tag = "2")]
-    pub amount: ::prost::alloc::string::String,
-    #[prost(uint32, tag = "3")]
-    pub decimals: u32,
-    #[prost(message, optional, tag = "4")]
-    pub last_update: ::core::option::Option<::prost_types::Timestamp>,
+    pub password: ::prost::alloc::string::String,
+}
+#[allow(clippy::derive_partial_eq_without_eq)]
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct Register {
+    #[prost(string, tag = "1")]
+    pub email: ::prost::alloc::string::String,
+    #[prost(string, tag = "2")]
+    pub password: ::prost::alloc::string::String,
+}
+#[allow(clippy::derive_partial_eq_without_eq)]
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct Token {
+    #[prost(string, tag = "1")]
+    pub token: ::prost::alloc::string::String,
+}
+#[allow(clippy::derive_partial_eq_without_eq)]
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct LoginResponse {
+    #[prost(string, tag = "1")]
+    pub token: ::prost::alloc::string::String,
+    #[prost(int64, tag = "2")]
+    pub expires_at: i64,
 }
 /// Generated client implementations.
-pub mod aggregator_client {
+pub mod user_service_client {
     #![allow(unused_variables, dead_code, missing_docs, clippy::let_unit_value)]
     use tonic::codegen::*;
     use tonic::codegen::http::Uri;
     #[derive(Debug, Clone)]
-    pub struct AggregatorClient<T> {
+    pub struct UserServiceClient<T> {
         inner: tonic::client::Grpc<T>,
     }
-    impl AggregatorClient<tonic::transport::Channel> {
+    impl UserServiceClient<tonic::transport::Channel> {
         /// Attempt to create a new client by connecting to a given endpoint.
         pub async fn connect<D>(dst: D) -> Result<Self, tonic::transport::Error>
         where
@@ -30,7 +48,7 @@ pub mod aggregator_client {
             Ok(Self::new(conn))
         }
     }
-    impl<T> AggregatorClient<T>
+    impl<T> UserServiceClient<T>
     where
         T: tonic::client::GrpcService<tonic::body::BoxBody>,
         T::Error: Into<StdError>,
@@ -48,7 +66,7 @@ pub mod aggregator_client {
         pub fn with_interceptor<F>(
             inner: T,
             interceptor: F,
-        ) -> AggregatorClient<InterceptedService<T, F>>
+        ) -> UserServiceClient<InterceptedService<T, F>>
         where
             F: tonic::service::Interceptor,
             T::ResponseBody: Default,
@@ -62,7 +80,7 @@ pub mod aggregator_client {
                 http::Request<tonic::body::BoxBody>,
             >>::Error: Into<StdError> + Send + Sync,
         {
-            AggregatorClient::new(InterceptedService::new(inner, interceptor))
+            UserServiceClient::new(InterceptedService::new(inner, interceptor))
         }
         /// Compress requests with the given encoding.
         ///
@@ -95,13 +113,10 @@ pub mod aggregator_client {
             self.inner = self.inner.max_encoding_message_size(limit);
             self
         }
-        pub async fn price_stream(
+        pub async fn login(
             &mut self,
-            request: impl tonic::IntoRequest<()>,
-        ) -> std::result::Result<
-            tonic::Response<tonic::codec::Streaming<super::PriceUpdate>>,
-            tonic::Status,
-        > {
+            request: impl tonic::IntoRequest<super::Login>,
+        ) -> std::result::Result<tonic::Response<super::LoginResponse>, tonic::Status> {
             self.inner
                 .ready()
                 .await
@@ -113,38 +128,133 @@ pub mod aggregator_client {
                 })?;
             let codec = tonic::codec::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static(
-                "/coin_sight.Aggregator/PriceStream",
+                "/coin_sight.UserService/login",
             );
             let mut req = request.into_request();
             req.extensions_mut()
-                .insert(GrpcMethod::new("coin_sight.Aggregator", "PriceStream"));
-            self.inner.server_streaming(req, path, codec).await
+                .insert(GrpcMethod::new("coin_sight.UserService", "login"));
+            self.inner.unary(req, path, codec).await
+        }
+        pub async fn logout(
+            &mut self,
+            request: impl tonic::IntoRequest<super::Token>,
+        ) -> std::result::Result<tonic::Response<()>, tonic::Status> {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::new(
+                        tonic::Code::Unknown,
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic::codec::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/coin_sight.UserService/logout",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(GrpcMethod::new("coin_sight.UserService", "logout"));
+            self.inner.unary(req, path, codec).await
+        }
+        pub async fn register(
+            &mut self,
+            request: impl tonic::IntoRequest<super::Register>,
+        ) -> std::result::Result<tonic::Response<()>, tonic::Status> {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::new(
+                        tonic::Code::Unknown,
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic::codec::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/coin_sight.UserService/register",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(GrpcMethod::new("coin_sight.UserService", "register"));
+            self.inner.unary(req, path, codec).await
+        }
+        pub async fn refresh_token(
+            &mut self,
+            request: impl tonic::IntoRequest<super::Token>,
+        ) -> std::result::Result<tonic::Response<super::LoginResponse>, tonic::Status> {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::new(
+                        tonic::Code::Unknown,
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic::codec::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/coin_sight.UserService/refresh_token",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(GrpcMethod::new("coin_sight.UserService", "refresh_token"));
+            self.inner.unary(req, path, codec).await
+        }
+        pub async fn validate_token(
+            &mut self,
+            request: impl tonic::IntoRequest<super::Token>,
+        ) -> std::result::Result<tonic::Response<()>, tonic::Status> {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::new(
+                        tonic::Code::Unknown,
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic::codec::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/coin_sight.UserService/validate_token",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(GrpcMethod::new("coin_sight.UserService", "validate_token"));
+            self.inner.unary(req, path, codec).await
         }
     }
 }
 /// Generated server implementations.
-pub mod aggregator_server {
+pub mod user_service_server {
     #![allow(unused_variables, dead_code, missing_docs, clippy::let_unit_value)]
     use tonic::codegen::*;
-    /// Generated trait containing gRPC methods that should be implemented for use with AggregatorServer.
+    /// Generated trait containing gRPC methods that should be implemented for use with UserServiceServer.
     #[async_trait]
-    pub trait Aggregator: Send + Sync + 'static {
-        /// Server streaming response type for the PriceStream method.
-        type PriceStreamStream: futures_core::Stream<
-                Item = std::result::Result<super::PriceUpdate, tonic::Status>,
-            >
-            + Send
-            + 'static;
-        async fn price_stream(
+    pub trait UserService: Send + Sync + 'static {
+        async fn login(
             &self,
-            request: tonic::Request<()>,
-        ) -> std::result::Result<
-            tonic::Response<Self::PriceStreamStream>,
-            tonic::Status,
-        >;
+            request: tonic::Request<super::Login>,
+        ) -> std::result::Result<tonic::Response<super::LoginResponse>, tonic::Status>;
+        async fn logout(
+            &self,
+            request: tonic::Request<super::Token>,
+        ) -> std::result::Result<tonic::Response<()>, tonic::Status>;
+        async fn register(
+            &self,
+            request: tonic::Request<super::Register>,
+        ) -> std::result::Result<tonic::Response<()>, tonic::Status>;
+        async fn refresh_token(
+            &self,
+            request: tonic::Request<super::Token>,
+        ) -> std::result::Result<tonic::Response<super::LoginResponse>, tonic::Status>;
+        async fn validate_token(
+            &self,
+            request: tonic::Request<super::Token>,
+        ) -> std::result::Result<tonic::Response<()>, tonic::Status>;
     }
     #[derive(Debug)]
-    pub struct AggregatorServer<T: Aggregator> {
+    pub struct UserServiceServer<T: UserService> {
         inner: _Inner<T>,
         accept_compression_encodings: EnabledCompressionEncodings,
         send_compression_encodings: EnabledCompressionEncodings,
@@ -152,7 +262,7 @@ pub mod aggregator_server {
         max_encoding_message_size: Option<usize>,
     }
     struct _Inner<T>(Arc<T>);
-    impl<T: Aggregator> AggregatorServer<T> {
+    impl<T: UserService> UserServiceServer<T> {
         pub fn new(inner: T) -> Self {
             Self::from_arc(Arc::new(inner))
         }
@@ -204,9 +314,9 @@ pub mod aggregator_server {
             self
         }
     }
-    impl<T, B> tonic::codegen::Service<http::Request<B>> for AggregatorServer<T>
+    impl<T, B> tonic::codegen::Service<http::Request<B>> for UserServiceServer<T>
     where
-        T: Aggregator,
+        T: UserService,
         B: Body + Send + 'static,
         B::Error: Into<StdError> + Send + 'static,
     {
@@ -222,21 +332,149 @@ pub mod aggregator_server {
         fn call(&mut self, req: http::Request<B>) -> Self::Future {
             let inner = self.inner.clone();
             match req.uri().path() {
-                "/coin_sight.Aggregator/PriceStream" => {
+                "/coin_sight.UserService/login" => {
                     #[allow(non_camel_case_types)]
-                    struct PriceStreamSvc<T: Aggregator>(pub Arc<T>);
-                    impl<T: Aggregator> tonic::server::ServerStreamingService<()>
-                    for PriceStreamSvc<T> {
-                        type Response = super::PriceUpdate;
-                        type ResponseStream = T::PriceStreamStream;
+                    struct loginSvc<T: UserService>(pub Arc<T>);
+                    impl<T: UserService> tonic::server::UnaryService<super::Login>
+                    for loginSvc<T> {
+                        type Response = super::LoginResponse;
                         type Future = BoxFuture<
-                            tonic::Response<Self::ResponseStream>,
+                            tonic::Response<Self::Response>,
                             tonic::Status,
                         >;
-                        fn call(&mut self, request: tonic::Request<()>) -> Self::Future {
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::Login>,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move { (*inner).login(request).await };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let inner = inner.0;
+                        let method = loginSvc(inner);
+                        let codec = tonic::codec::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/coin_sight.UserService/logout" => {
+                    #[allow(non_camel_case_types)]
+                    struct logoutSvc<T: UserService>(pub Arc<T>);
+                    impl<T: UserService> tonic::server::UnaryService<super::Token>
+                    for logoutSvc<T> {
+                        type Response = ();
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::Token>,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move { (*inner).logout(request).await };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let inner = inner.0;
+                        let method = logoutSvc(inner);
+                        let codec = tonic::codec::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/coin_sight.UserService/register" => {
+                    #[allow(non_camel_case_types)]
+                    struct registerSvc<T: UserService>(pub Arc<T>);
+                    impl<T: UserService> tonic::server::UnaryService<super::Register>
+                    for registerSvc<T> {
+                        type Response = ();
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::Register>,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move { (*inner).register(request).await };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let inner = inner.0;
+                        let method = registerSvc(inner);
+                        let codec = tonic::codec::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/coin_sight.UserService/refresh_token" => {
+                    #[allow(non_camel_case_types)]
+                    struct refresh_tokenSvc<T: UserService>(pub Arc<T>);
+                    impl<T: UserService> tonic::server::UnaryService<super::Token>
+                    for refresh_tokenSvc<T> {
+                        type Response = super::LoginResponse;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::Token>,
+                        ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
                             let fut = async move {
-                                (*inner).price_stream(request).await
+                                (*inner).refresh_token(request).await
                             };
                             Box::pin(fut)
                         }
@@ -248,7 +486,7 @@ pub mod aggregator_server {
                     let inner = self.inner.clone();
                     let fut = async move {
                         let inner = inner.0;
-                        let method = PriceStreamSvc(inner);
+                        let method = refresh_tokenSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
                         let mut grpc = tonic::server::Grpc::new(codec)
                             .apply_compression_config(
@@ -259,7 +497,51 @@ pub mod aggregator_server {
                                 max_decoding_message_size,
                                 max_encoding_message_size,
                             );
-                        let res = grpc.server_streaming(method, req).await;
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/coin_sight.UserService/validate_token" => {
+                    #[allow(non_camel_case_types)]
+                    struct validate_tokenSvc<T: UserService>(pub Arc<T>);
+                    impl<T: UserService> tonic::server::UnaryService<super::Token>
+                    for validate_tokenSvc<T> {
+                        type Response = ();
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::Token>,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                (*inner).validate_token(request).await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let inner = inner.0;
+                        let method = validate_tokenSvc(inner);
+                        let codec = tonic::codec::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
                         Ok(res)
                     };
                     Box::pin(fut)
@@ -279,7 +561,7 @@ pub mod aggregator_server {
             }
         }
     }
-    impl<T: Aggregator> Clone for AggregatorServer<T> {
+    impl<T: UserService> Clone for UserServiceServer<T> {
         fn clone(&self) -> Self {
             let inner = self.inner.clone();
             Self {
@@ -291,7 +573,7 @@ pub mod aggregator_server {
             }
         }
     }
-    impl<T: Aggregator> Clone for _Inner<T> {
+    impl<T: UserService> Clone for _Inner<T> {
         fn clone(&self) -> Self {
             Self(Arc::clone(&self.0))
         }
@@ -301,7 +583,7 @@ pub mod aggregator_server {
             write!(f, "{:?}", self.0)
         }
     }
-    impl<T: Aggregator> tonic::server::NamedService for AggregatorServer<T> {
-        const NAME: &'static str = "coin_sight.Aggregator";
+    impl<T: UserService> tonic::server::NamedService for UserServiceServer<T> {
+        const NAME: &'static str = "coin_sight.UserService";
     }
 }

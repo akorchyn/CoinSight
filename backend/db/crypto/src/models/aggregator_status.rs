@@ -1,9 +1,8 @@
 use diesel::prelude::*;
 use diesel_async::AsyncPgConnection;
 use diesel_async::RunQueryDsl;
-use juniper::GraphQLObject;
 
-#[derive(Queryable, GraphQLObject)]
+#[derive(Queryable)]
 pub struct AggregatorStatus {
     pub currency_id: i32,
     pub timestamp: chrono::NaiveDateTime,

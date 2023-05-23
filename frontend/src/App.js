@@ -12,6 +12,7 @@ import { ApolloClient, ApolloProvider, InMemoryCache } from '@apollo/client';
 import { Client as Styletron } from 'styletron-engine-atomic';
 import { Provider as StyletronProvider } from 'styletron-react';
 import { DarkTheme, BaseProvider, styled } from 'baseui';
+import Login from './pages/Login';
 
 const client = new ApolloClient({
   uri: process.env.REACT_APP_API_ENDPOINT,
@@ -41,6 +42,7 @@ function App() {
                   <Route path="/" element={<MainPage />} />
                   <Route path="/asset/:symbol" element={<AssetPage />} />
                   <Route path="/alerts" element={<Alerts />} />
+                  <Route path="/login" element={<Login />} />
                 </Routes>
                 <Footer />
               </div>

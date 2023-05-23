@@ -10,4 +10,4 @@ futures.workspace = true
 chrono.workspace = true
 anyhow.workspace = true
 
-csb-db.workspace = true
+csb-db-crypto.workspace = true

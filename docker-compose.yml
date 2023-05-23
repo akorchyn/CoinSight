@@ -23,6 +23,22 @@ services:
       - POSTGRES_DB=${POSTGRES_DB}
     ports:
       - 5432:5432
+  postgres-user:
+    image: postgres:14.0-alpine
+    restart: always
+    volumes:
+      - ./data-user:/var/lib/postgresql/data
+    networks:
+      - network
+    restart: always
+    volumes:
+      - ./data-user:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=${USER_POSTGRES_USER}
+      - POSTGRES_PASSWORD=${USER_POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+    ports:
+      - 5433:5432
   graphql:
     build:
       context: .
@@ -30,13 +46,16 @@ services:
     restart: always
     depends_on:
       - postgres
+      - user-service
     networks:
       - network
     ports:
       - 8000:8000
     environment:
       - ROCKET_ADDRESS=0.0.0.0
-      - DATABASE_URL=${DATABASE_URL}
+      - DATABASE_CRYPTO_URL=${DATABASE_URL}
+      - DATABASE_USERS_URL=${USER_DATABASE_URL}
+      - USER_SERVICE_URL=http://user-service:8001
   chainlink-collector:
     build:
       context: .
@@ -94,6 +113,19 @@ services:
     environment:
       - CURRENCY=USD
       - DATABASE_URL=${DATABASE_URL}
+  user-service:
+    build:
+      context: .
+      target: user-service
+    restart: always
+    depends_on:
+      - postgres-user
+    networks:
+      - network
+    environment:
+      - PORT=8001
+      - DATABASE_URL=${USER_DATABASE_URL}
+      - KEY=${KEY}
   frontend:
     restart: always
     build: frontend

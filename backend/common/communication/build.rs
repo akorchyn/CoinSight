@@ -5,6 +5,6 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     create_dir_all(Path::new("src/proto"))?;
     tonic_build::configure()
         .out_dir("src/proto")
-        .compile(&["proto/aggregator.proto"], &["proto/"])?;
+        .compile(&["proto/UserService.proto"], &["proto/"])?;
     Ok(())
 }

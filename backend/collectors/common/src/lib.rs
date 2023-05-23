@@ -1,8 +1,8 @@
 use anyhow::Context;
-use csb_db::models::SourceCryptoMapping;
+use csb_db_crypto::models::SourceCryptoMapping;
 
 pub struct Collector {
-    context: csb_db::Context,
+    context: csb_db_crypto::Db,
     required_keys: Vec<SourceCryptoMapping>,
     source_id: i32,
     currency_id: i32,
@@ -12,7 +12,7 @@ pub struct Collector {
 
 impl Collector {
     pub fn new(
-        context: csb_db::Context,
+        context: csb_db_crypto::Db,
         required_keys: Vec<SourceCryptoMapping>,
         currency_id: i32,
         url: String,
@@ -47,7 +47,7 @@ impl Collector {
                 eprintln!("Failed to retrieve price: {e}");
                 continue;
             }
-            let price = csb_db::models::NewPrice::new(
+            let price = csb_db_crypto::models::NewPrice::new(
                 crypto.crypto_id,
                 self.source_id,
                 self.currency_id,
@@ -93,10 +93,10 @@ pub async fn run(
     source_name: &str,
     helper: Box<dyn CollectorHelper + Send + Sync>,
 ) -> anyhow::Result<()> {
-    let context = csb_db::Context::new(connection_string)
+    let context = csb_db_crypto::Db::new(connection_string)
         .await
         .expect("Failed to connect to the database");
-    let required_keys = csb_db::models::SourceCryptoMapping::load_keys_by_source_name(
+    let required_keys = csb_db_crypto::models::SourceCryptoMapping::load_keys_by_source_name(
         &mut context
             .db_connection
             .get()

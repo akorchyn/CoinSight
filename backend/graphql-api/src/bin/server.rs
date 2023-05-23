@@ -1,5 +1,4 @@
-use csb_db::Context;
-use csb_grapql_lib::{mutation::Mutation, query::Query};
+use csb_grapql_lib::{mutation::Mutation, query::Query, Context};
 use juniper::EmptySubscription;
 use rocket::{response::content, State};
 use rocket_cors::{AllowedOrigins, CorsOptions, Method};
@@ -48,10 +47,26 @@ async fn main() {
         )
         .allow_credentials(true);
 
-    let database_url = std::env::var("DATABASE_URL").expect("DATABASE_URL must be set");
-    let context = Context::new(database_url)
+    let database_crypto =
+        std::env::var("DATABASE_CRYPTO_URL").expect("DATABASE_CRYPTO_URL must be set");
+    let database_users =
+        std::env::var("DATABASE_USERS_URL").expect("DATABASE_USERS_URL must be set");
+    let user_service = std::env::var("USER_SERVICE_URL").expect("USER_SERVICE_URL must be set");
+
+    let database_crypto = csb_db_crypto::Db::new(database_crypto)
         .await
-        .expect("Failed to create context");
+        .expect("Failed to create crypto context");
+    let database_users = csb_db_user::Db::new(database_users)
+        .await
+        .expect("Failed to create users context");
+    let user_service = csb_grapql_lib::UserService::new(user_service);
+
+    let context = Context {
+        crypto_db: database_crypto,
+        user_db: database_users,
+        user_service,
+    };
+
     let _ = rocket::build()
         .manage(context)
         .manage(Schema::new(

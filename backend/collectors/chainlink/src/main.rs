@@ -9,10 +9,10 @@ async fn main() {
     let node_url = std::env::var("NODE_URL").expect("NODE_URL must be set");
     let node_url = Url::parse(&node_url).expect("NODE_URL must be a valid url");
     let connection_string = std::env::var("DATABASE_URL").expect("DATABASE_URL must be set");
-    let context = csb_db::Context::new(connection_string)
+    let context = csb_db_crypto::Db::new(connection_string)
         .await
         .expect("Failed to connect to the database");
-    let required_keys = csb_db::models::SourceCryptoMapping::load_keys_by_source_name(
+    let required_keys = csb_db_crypto::models::SourceCryptoMapping::load_keys_by_source_name(
         &mut context
             .db_connection
             .get()
