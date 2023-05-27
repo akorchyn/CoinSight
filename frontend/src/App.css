@@ -1,4 +1,5 @@
 body {
+  height: 100%;
   background: #232323;
   background-image: radial-gradient(#424242 1px, transparent 1px), radial-gradient(#424242 1px, transparent 1px);
   background-size: 20px 20px;
@@ -24,6 +25,7 @@ body {
 }
 
 .App {
+  height: 100%;
   text-align: center;
 }
 

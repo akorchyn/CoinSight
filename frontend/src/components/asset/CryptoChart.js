@@ -31,6 +31,7 @@ query getChartData($crypto_id: Int!) {
 
 const CryptoChart = ({ crypto_id }) => {
     const [sources, setSources] = useState(null);
+    const [activeMap, setActive] = useState(new Map());
 
     const onCompleted = (data) => {
 
@@ -38,10 +39,11 @@ const CryptoChart = ({ crypto_id }) => {
             return { price: parseFloat(price), timestamp: new Date(timestamp).getTime() };
         };
         const processed_data = data.source.fullHistory.sources.map((source) => {
+
             const cryptoHistory = source.cryptoHistory.slice().map((point) => {
                 return process_point(point.price, point.timestamp);
             });
-            return { ...source, cryptoHistory, visible: false, color: stringToColour(source.name) };
+            return { ...source, cryptoHistory, active: activeMap.get(source.name) === undefined ? false : activeMap.get(source.name), color: stringToColour(source.name) };
         });
 
         var median = [];
@@ -58,19 +60,19 @@ const CryptoChart = ({ crypto_id }) => {
             [{
                 name: "Third Quartile",
                 cryptoHistory: thirdQuartile,
-                visible: true,
+                active: activeMap.get("Third Quartile") === undefined ? true : activeMap.get("Third Quartile"),
                 color: '#ffc658'
             },
             {
                 name: "Median",
                 cryptoHistory: median,
-                visible: true,
+                active: activeMap.get("Median") === undefined ? true : activeMap.get("Median"),
                 color: '#82ca9d'
             },
             {
                 name: "First Quartile",
                 cryptoHistory: firstQuartile,
-                visible: true,
+                active: activeMap.get("First Quartile") === undefined ? true : activeMap.get("First Quartile"),
                 color: "#8884d8",
             },
             ]));
@@ -138,7 +140,8 @@ const CryptoChart = ({ crypto_id }) => {
             }
         },
         tooltip: {
-            valueDecimals: 3
+            valueDecimals: 3,
+            shared: true
         },
         credits: {
             enabled: false
@@ -152,7 +155,7 @@ const CryptoChart = ({ crypto_id }) => {
                 color: source.color,
                 type: 'areaspline',
                 stickyTracking: false,
-                visible: source.visible,
+                visible: activeMap.get(source.name) === undefined ? source.active : activeMap.get(source.name),
                 fillColor: {
                     linearGradient: {
                         x1: 0,
@@ -174,7 +177,12 @@ const CryptoChart = ({ crypto_id }) => {
                         lineWidth: 3
                     }
                 },
-                threshold: null
+                threshold: null,
+                events: {
+                    legendItemClick: function () {
+                        setActive(new Map(activeMap.set(this.name, !this.visible)));
+                    }
+                }
             };
         }),
     };
@@ -182,9 +190,11 @@ const CryptoChart = ({ crypto_id }) => {
     return (
         <HighchartsReact highcharts={Highcharts} options={options} containerProps={{
             style: {
-                width: '100%',
+                width: '90%',
+                height: '50vh'
             }
         }} />
+
     );
 };
 
