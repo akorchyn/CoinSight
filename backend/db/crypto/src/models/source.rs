@@ -20,6 +20,12 @@ impl Source {
 
         sources.filter(name_column.eq(name)).first(connection).await
     }
+
+    pub async fn all(connection: &mut AsyncPgConnection) -> QueryResult<Vec<Source>> {
+        use crate::schema::sources::dsl::sources;
+
+        sources.load(connection).await
+    }
 }
 
 #[derive(Queryable, Clone)]

@@ -1,6 +1,6 @@
 use bigdecimal::BigDecimal;
 use csb_db_crypto::models;
-use juniper::{graphql_object, FieldResult};
+use juniper::{graphql_object, FieldResult, GraphQLObject};
 
 use crate::Context;
 
@@ -131,5 +131,57 @@ impl Price {
 
     fn timestamp(&self) -> chrono::NaiveDateTime {
         self.0.timestamp
+    }
+}
+
+pub struct Source(pub csb_db_crypto::models::Source);
+
+#[graphql_object(context = Context)]
+impl Source {
+    fn id(&self) -> i32 {
+        self.0.id
+    }
+
+    fn name(&self) -> &str {
+        &self.0.name
+    }
+
+    async fn crypto_history(
+        &self,
+        crypto_id: i32,
+        #[graphql(default = 1)] currency_id: i32,
+        #[graphql(default = 0)] offset: i32,
+        #[graphql(default = 500)] limit: i32,
+        context: &Context,
+    ) -> FieldResult<Vec<Price>> {
+        let mut connection = context.crypto_db.db_connection.get().await?;
+        Ok(models::Price::get_history_paged(
+            &mut connection,
+            crypto_id,
+            currency_id,
+            self.0.id,
+            offset,
+            limit,
+        )
+        .await?
+        .into_iter()
+        .map(Price)
+        .collect())
+    }
+}
+
+pub struct FullHistory {
+    pub aggregated_prices: Vec<AggregatedPrice>,
+    pub sources: Vec<Source>,
+}
+
+#[graphql_object(context = Context)]
+impl FullHistory {
+    fn aggregated_prices(&self) -> &[AggregatedPrice] {
+        &self.aggregated_prices
+    }
+
+    fn sources(&self) -> &[Source] {
+        &self.sources
     }
 }

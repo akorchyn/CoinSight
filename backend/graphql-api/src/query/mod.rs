@@ -11,16 +11,20 @@ impl Query {
         "1.0"
     }
 
-    async fn crypto() -> FieldResult<cryptocurrency::CryptoQuery> {
-        Ok(cryptocurrency::CryptoQuery)
+    fn crypto() -> cryptocurrency::CryptoQuery {
+        cryptocurrency::CryptoQuery
     }
 
-    async fn price() -> FieldResult<price::PriceQuery> {
-        Ok(price::PriceQuery)
+    fn price() -> price::PriceQuery {
+        price::PriceQuery
     }
 
-    async fn aggregated_price() -> FieldResult<aggregated_price::AggregatedPriceQuery> {
-        Ok(aggregated_price::AggregatedPriceQuery)
+    fn aggregated_price() -> aggregated_price::AggregatedPriceQuery {
+        aggregated_price::AggregatedPriceQuery
+    }
+
+    fn source() -> sources::SourceQuery {
+        sources::SourceQuery
     }
 }
 
@@ -165,6 +169,36 @@ mod cryptocurrency {
                     .map(crypto::Cryptocurrency)
                     .collect(),
             )
+        }
+    }
+}
+
+mod sources {
+    use crate::types::crypto::FullHistory;
+
+    use super::*;
+
+    pub struct SourceQuery;
+
+    #[graphql_object(context = Context)]
+    impl SourceQuery {
+        async fn full_history(context: &Context, crypto_id: i32) -> FieldResult<FullHistory> {
+            let mut connection = context.crypto_db.db_connection.get().await?;
+            let sources = models::Source::all(&mut connection)
+                .await?
+                .into_iter()
+                .map(crypto::Source)
+                .collect();
+            let aggregated_prices =
+                models::AggregatedPrice::get_history_paged(&mut connection, crypto_id, 1, 0, 500)
+                    .await?
+                    .into_iter()
+                    .map(crypto::AggregatedPrice)
+                    .collect();
+            Ok(FullHistory {
+                aggregated_prices,
+                sources,
+            })
         }
     }
 }
