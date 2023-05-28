@@ -40,7 +40,6 @@ const Registration = () => {
 
     const error_notification = (error) => {
         setError(error);
-        console.log(error);
     }
 
     const [register, { loading }] = useMutation(REGISTEG_QUERY, { onCompleted: success, onError: error_notification });

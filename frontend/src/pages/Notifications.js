@@ -52,7 +52,6 @@ const Notifications = () => {
         const updateToken = () => {
             const token = localStorage.getItem('token');
             setToken(token);
-            console.log(token);
             if (token === undefined || token === null) {
                 navigate('/login');
             }
