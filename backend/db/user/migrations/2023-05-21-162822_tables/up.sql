@@ -22,6 +22,7 @@ CREATE TABLE notifications (
     user_id INTEGER REFERENCES users(id) NOT NULL,
     type VARCHAR(255) NOT NULL,
     source VARCHAR(255),
+    crypto_currency VARCHAR(255),
     value_change DECIMAL,
     percent_change DECIMAL,
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
@@ -33,6 +34,7 @@ CREATE TABLE notification_preferences (
   id SERIAL PRIMARY KEY,
   notification_id INTEGER NOT NULL,
   notification_method VARCHAR(255) NOT NULL,
+  notification_data VARCHAR(255) NOT NULL,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (notification_id) REFERENCES notifications (id)

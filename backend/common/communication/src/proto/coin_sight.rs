@@ -30,6 +30,79 @@ pub struct LoginResponse {
     #[prost(int64, tag = "2")]
     pub expires_at: i64,
 }
+#[allow(clippy::derive_partial_eq_without_eq)]
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct Notification {
+    #[prost(string, tag = "1")]
+    pub token: ::prost::alloc::string::String,
+    #[prost(string, tag = "2")]
+    pub coin_name: ::prost::alloc::string::String,
+    #[prost(string, tag = "3")]
+    pub source: ::prost::alloc::string::String,
+    #[prost(string, tag = "4")]
+    pub change_type: ::prost::alloc::string::String,
+    #[prost(string, tag = "5")]
+    pub change_value: ::prost::alloc::string::String,
+    #[prost(string, tag = "6")]
+    pub current_price: ::prost::alloc::string::String,
+    #[prost(string, tag = "7")]
+    pub name: ::prost::alloc::string::String,
+}
+#[allow(clippy::derive_partial_eq_without_eq)]
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct Notifications {
+    #[prost(message, repeated, tag = "1")]
+    pub notifications: ::prost::alloc::vec::Vec<notifications::NotificationData>,
+}
+/// Nested message and enum types in `Notifications`.
+pub mod notifications {
+    #[allow(clippy::derive_partial_eq_without_eq)]
+    #[derive(Clone, PartialEq, ::prost::Message)]
+    pub struct NotificationData {
+        #[prost(int64, tag = "1")]
+        pub id: i64,
+        #[prost(string, tag = "2")]
+        pub coin_name: ::prost::alloc::string::String,
+        #[prost(string, tag = "3")]
+        pub source: ::prost::alloc::string::String,
+        #[prost(string, tag = "4")]
+        pub change_type: ::prost::alloc::string::String,
+        #[prost(string, tag = "5")]
+        pub change_value: ::prost::alloc::string::String,
+        #[prost(string, tag = "6")]
+        pub current_price: ::prost::alloc::string::String,
+        #[prost(string, tag = "7")]
+        pub name: ::prost::alloc::string::String,
+    }
+}
+#[allow(clippy::derive_partial_eq_without_eq)]
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct EditNotification {
+    #[prost(string, tag = "1")]
+    pub token: ::prost::alloc::string::String,
+    #[prost(int64, tag = "2")]
+    pub id: i64,
+    #[prost(string, tag = "3")]
+    pub coin_name: ::prost::alloc::string::String,
+    #[prost(string, tag = "4")]
+    pub source: ::prost::alloc::string::String,
+    #[prost(string, tag = "5")]
+    pub change_type: ::prost::alloc::string::String,
+    #[prost(string, tag = "6")]
+    pub change_value: ::prost::alloc::string::String,
+    #[prost(string, tag = "7")]
+    pub current_price: ::prost::alloc::string::String,
+    #[prost(string, tag = "8")]
+    pub name: ::prost::alloc::string::String,
+}
+#[allow(clippy::derive_partial_eq_without_eq)]
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct RemoveNotification {
+    #[prost(string, tag = "1")]
+    pub token: ::prost::alloc::string::String,
+    #[prost(int64, tag = "2")]
+    pub id: i64,
+}
 /// Generated client implementations.
 pub mod user_service_client {
     #![allow(unused_variables, dead_code, missing_docs, clippy::let_unit_value)]
@@ -225,6 +298,96 @@ pub mod user_service_client {
                 .insert(GrpcMethod::new("coin_sight.UserService", "validate_token"));
             self.inner.unary(req, path, codec).await
         }
+        pub async fn add_notification(
+            &mut self,
+            request: impl tonic::IntoRequest<super::Notification>,
+        ) -> std::result::Result<tonic::Response<()>, tonic::Status> {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::new(
+                        tonic::Code::Unknown,
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic::codec::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/coin_sight.UserService/add_notification",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(GrpcMethod::new("coin_sight.UserService", "add_notification"));
+            self.inner.unary(req, path, codec).await
+        }
+        pub async fn notifications(
+            &mut self,
+            request: impl tonic::IntoRequest<super::Token>,
+        ) -> std::result::Result<tonic::Response<super::Notifications>, tonic::Status> {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::new(
+                        tonic::Code::Unknown,
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic::codec::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/coin_sight.UserService/notifications",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(GrpcMethod::new("coin_sight.UserService", "notifications"));
+            self.inner.unary(req, path, codec).await
+        }
+        pub async fn remove_notification(
+            &mut self,
+            request: impl tonic::IntoRequest<super::RemoveNotification>,
+        ) -> std::result::Result<tonic::Response<()>, tonic::Status> {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::new(
+                        tonic::Code::Unknown,
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic::codec::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/coin_sight.UserService/remove_notification",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(
+                    GrpcMethod::new("coin_sight.UserService", "remove_notification"),
+                );
+            self.inner.unary(req, path, codec).await
+        }
+        pub async fn edit_notification(
+            &mut self,
+            request: impl tonic::IntoRequest<super::EditNotification>,
+        ) -> std::result::Result<tonic::Response<()>, tonic::Status> {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::new(
+                        tonic::Code::Unknown,
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic::codec::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/coin_sight.UserService/edit_notification",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(GrpcMethod::new("coin_sight.UserService", "edit_notification"));
+            self.inner.unary(req, path, codec).await
+        }
     }
 }
 /// Generated server implementations.
@@ -253,6 +416,22 @@ pub mod user_service_server {
         async fn validate_token(
             &self,
             request: tonic::Request<super::Token>,
+        ) -> std::result::Result<tonic::Response<()>, tonic::Status>;
+        async fn add_notification(
+            &self,
+            request: tonic::Request<super::Notification>,
+        ) -> std::result::Result<tonic::Response<()>, tonic::Status>;
+        async fn notifications(
+            &self,
+            request: tonic::Request<super::Token>,
+        ) -> std::result::Result<tonic::Response<super::Notifications>, tonic::Status>;
+        async fn remove_notification(
+            &self,
+            request: tonic::Request<super::RemoveNotification>,
+        ) -> std::result::Result<tonic::Response<()>, tonic::Status>;
+        async fn edit_notification(
+            &self,
+            request: tonic::Request<super::EditNotification>,
         ) -> std::result::Result<tonic::Response<()>, tonic::Status>;
     }
     #[derive(Debug)]
@@ -533,6 +712,186 @@ pub mod user_service_server {
                     let fut = async move {
                         let inner = inner.0;
                         let method = validate_tokenSvc(inner);
+                        let codec = tonic::codec::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/coin_sight.UserService/add_notification" => {
+                    #[allow(non_camel_case_types)]
+                    struct add_notificationSvc<T: UserService>(pub Arc<T>);
+                    impl<T: UserService> tonic::server::UnaryService<super::Notification>
+                    for add_notificationSvc<T> {
+                        type Response = ();
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::Notification>,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                (*inner).add_notification(request).await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let inner = inner.0;
+                        let method = add_notificationSvc(inner);
+                        let codec = tonic::codec::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/coin_sight.UserService/notifications" => {
+                    #[allow(non_camel_case_types)]
+                    struct notificationsSvc<T: UserService>(pub Arc<T>);
+                    impl<T: UserService> tonic::server::UnaryService<super::Token>
+                    for notificationsSvc<T> {
+                        type Response = super::Notifications;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::Token>,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                (*inner).notifications(request).await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let inner = inner.0;
+                        let method = notificationsSvc(inner);
+                        let codec = tonic::codec::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/coin_sight.UserService/remove_notification" => {
+                    #[allow(non_camel_case_types)]
+                    struct remove_notificationSvc<T: UserService>(pub Arc<T>);
+                    impl<
+                        T: UserService,
+                    > tonic::server::UnaryService<super::RemoveNotification>
+                    for remove_notificationSvc<T> {
+                        type Response = ();
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::RemoveNotification>,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                (*inner).remove_notification(request).await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let inner = inner.0;
+                        let method = remove_notificationSvc(inner);
+                        let codec = tonic::codec::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/coin_sight.UserService/edit_notification" => {
+                    #[allow(non_camel_case_types)]
+                    struct edit_notificationSvc<T: UserService>(pub Arc<T>);
+                    impl<
+                        T: UserService,
+                    > tonic::server::UnaryService<super::EditNotification>
+                    for edit_notificationSvc<T> {
+                        type Response = ();
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::EditNotification>,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                (*inner).edit_notification(request).await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let inner = inner.0;
+                        let method = edit_notificationSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
                         let mut grpc = tonic::server::Grpc::new(codec)
                             .apply_compression_config(

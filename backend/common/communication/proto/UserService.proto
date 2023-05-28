@@ -10,6 +10,11 @@ service UserService {
     rpc register(Register) returns (google.protobuf.Empty);
     rpc refresh_token(Token) returns (LoginResponse);
     rpc validate_token(Token) returns (google.protobuf.Empty);
+
+    rpc add_notification(Notification) returns (google.protobuf.Empty);
+    rpc notifications(Token) returns (Notifications);
+    rpc remove_notification(RemoveNotification) returns (google.protobuf.Empty);
+    rpc edit_notification(EditNotification) returns (google.protobuf.Empty);
 }
 
 message Login {
@@ -30,4 +35,43 @@ message Token {
 message LoginResponse {
     string token = 1;
     int64 expires_at = 2;
+}
+
+message Notification {
+    string token = 1;
+    string coin_name = 2;
+    string source = 3;
+    string change_type = 4;
+    string change_value = 5;
+    string current_price = 6;
+    string name = 7;
+}
+
+message Notifications {
+    message NotificationData {
+        int64 id = 1;
+        string coin_name = 2;
+        string source = 3;
+        string change_type = 4;
+        string change_value = 5;
+        string current_price = 6;
+        string name = 7;
+    }
+    repeated NotificationData notifications = 1;
+}
+
+message EditNotification {
+    string token = 1;
+    int64 id = 2;
+    string coin_name = 3;
+    string source = 4;
+    string change_type = 5;
+    string change_value = 6;
+    string current_price = 7;
+    string name = 8;
+}
+
+message RemoveNotification {
+    string token = 1;
+    int64 id = 2;
 }

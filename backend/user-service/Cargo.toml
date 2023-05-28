@@ -19,3 +19,4 @@ tokio.workspace = true
 dotenvy.workspace = true
 diesel.workspace = true
 thiserror.workspace = true
+bigdecimal.workspace = true

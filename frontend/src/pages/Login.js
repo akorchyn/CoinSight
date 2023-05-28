@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button, KIND as BKind } from "baseui/button";
 import { useMutation, gql } from '@apollo/client';
+import { FormControl } from 'baseui/form-control';
 
 import Loading from '../components/common/Loading';
 import "./css/Auth.css"
@@ -85,18 +86,19 @@ const Login = () => {
         <h1 className='title'>Login</h1>
         {error && <p className='error'>{error.message}</p>}
         <div className='form-wrapper'>
-            <Input
-                name='email'
-                placeholder='Email'
-                onChange={e => onChange(e)}
-                required
-                error={invalid_email}
-            />
-            {invalid_email && <p className='error'>Invalid email</p>}
+            <FormControl error={invalid_email ? 'Invalid email' : null}>
+                <Input
+                    name='email'
+                    placeholder='Email'
+                    onChange={e => onChange(e)}
+                    required
+                    error={invalid_email}
+                />
+            </FormControl>
+
             <br />
 
             <Input
-
                 placeholder='Password'
                 name='password'
                 type="password"
@@ -111,7 +113,7 @@ const Login = () => {
             <br />
             <Button style={{ width: "100%" }} onClick={submit} kind={BKind.secondary} disabled={login_disabled} >Login</Button>
         </div>
-    </div>
+    </div >
 };
 
 export default Login;

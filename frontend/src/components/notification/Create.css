@@ -1,0 +1,15 @@
+.notifyIcon {
+    width: 30px;
+    height: 30px;
+    margin: 0 0 0 10px;
+    cursor: pointer;
+    border-radius: 50%;
+}
+
+
+.error {
+    width: calc(100% - 20px);
+    background: rgba(255, 0, 0, 0.1);
+    color: rgb(255, 255, 255);
+    padding: 10px;
+}

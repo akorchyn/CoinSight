@@ -1,12 +1,17 @@
 import React from "react";
 import "./StatisticInfo.css";
 import Price from "../common/Price";
+import CreateNotification from "../notification/Create";
 
 function AssetInfo({ assetData }) {
   const { name, symbol, description, medianPrice, firstQuartilePrice, thirdQuartilePrice } = assetData;
+
   return (
     <div className="wrapper">
-      <h1 className="asset-name">{name}<span className="asset-symbol">{symbol}</span></h1>
+      <h1 className="asset-name">
+        {name}<span className="asset-symbol">{symbol}</span>
+        <CreateNotification preCryptoSymbol={symbol} />
+      </h1>
       <p className="description">{description}</p>
       <h3 className="price-h2">Prices</h3>
       <div className="price-info-wrapper">

@@ -17,10 +17,17 @@ const SignOut = () => {
         window.dispatchEvent(new Event('storage'));
     }
 
+    const onError = () => {
+        localStorage.removeItem('token');
+        localStorage.removeItem('expiresAt');
+        window.dispatchEvent(new Event('storage'));
+    };
+
 
     const [signout] = useMutation(SIGNOUT_MUTATION, {
         variables: { token: localStorage.getItem('token') },
-        onCompleted: success
+        onCompleted: success,
+        onError
     });
 
 

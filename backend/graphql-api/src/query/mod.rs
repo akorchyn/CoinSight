@@ -1,4 +1,4 @@
-use crate::types::crypto;
+use crate::types::{crypto, user};
 use crate::Context;
 use csb_db_crypto::models;
 use juniper::{graphql_object, FieldResult};
@@ -25,6 +25,10 @@ impl Query {
 
     fn source() -> sources::SourceQuery {
         sources::SourceQuery
+    }
+
+    fn notification() -> notifications::NotificationQuery {
+        notifications::NotificationQuery
     }
 }
 
@@ -144,9 +148,6 @@ mod cryptocurrency {
             context: &Context,
             query: String,
         ) -> FieldResult<Vec<crypto::Cryptocurrency>> {
-            if query.is_empty() {
-                return Ok(vec![]);
-            }
             let mut connection = context.crypto_db.db_connection.get().await?;
             Ok(
                 models::Cryptocurrency::search_by_symbol_or_name(&mut connection, query)
@@ -169,6 +170,15 @@ mod cryptocurrency {
                     .map(crypto::Cryptocurrency)
                     .collect(),
             )
+        }
+
+        async fn all(context: &Context) -> FieldResult<Vec<crypto::Cryptocurrency>> {
+            let mut connection = context.crypto_db.db_connection.get().await?;
+            Ok(models::Cryptocurrency::all(&mut connection)
+                .await?
+                .into_iter()
+                .map(crypto::Cryptocurrency)
+                .collect())
         }
     }
 }
@@ -199,6 +209,39 @@ mod sources {
                 aggregated_prices,
                 sources,
             })
+        }
+
+        async fn all(context: &Context) -> FieldResult<Vec<crypto::Source>> {
+            let mut connection = context.crypto_db.db_connection.get().await?;
+            Ok(models::Source::all(&mut connection)
+                .await?
+                .into_iter()
+                .map(crypto::Source)
+                .collect())
+        }
+    }
+}
+
+mod notifications {
+    use crate::grpc_error_to_field_error;
+
+    use super::*;
+
+    pub struct NotificationQuery;
+
+    #[graphql_object(context = Context)]
+    impl NotificationQuery {
+        async fn all(context: &Context, token: String) -> FieldResult<Vec<user::Notification>> {
+            let mut service = context.user_service.client().await?;
+            Ok(service
+                .notifications(csb_comm::Token { token })
+                .await
+                .map_err(grpc_error_to_field_error)?
+                .into_inner()
+                .notifications
+                .into_iter()
+                .map(Into::<user::Notification>::into)
+                .collect())
         }
     }
 }

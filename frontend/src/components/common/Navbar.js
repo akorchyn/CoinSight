@@ -43,7 +43,7 @@ const Navbar = () => {
             {token &&
                 <ul>
                     <li>
-                        <Link to="/alerts" className="navItem">Notifications</Link>
+                        <Link to="/notifications" className="navItem">Notifications</Link>
                     </li>
                     <li>
                         <SignOut className="navItem" />

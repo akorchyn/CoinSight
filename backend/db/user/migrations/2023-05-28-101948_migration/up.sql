@@ -1,0 +1,2 @@
+ALTER TABLE notifications
+ALTER COLUMN source SET NOT NULL;

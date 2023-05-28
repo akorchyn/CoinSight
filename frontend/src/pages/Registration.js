@@ -7,6 +7,7 @@ import { useMutation, gql } from '@apollo/client';
 import Loading from '../components/common/Loading';
 import "./css/Auth.css"
 import { useEffect } from 'react';
+import { FormControl } from 'baseui/form-control';
 
 const REGISTEG_QUERY = gql`
     mutation Register($login: String!, $email: String!, $password: String!) {
@@ -94,54 +95,57 @@ const Registration = () => {
         <h1 className='title'>Registration</h1>
         {error && <p className='error'>{error.message}</p>}
         <div className='form-wrapper'>
-            <Input
-                name='login'
-                placeholder='Login'
-                onChange={e => onChange(e)}
-                required
-            />
-            <br />
-            <Input
-                name='email'
-                placeholder='Email'
-                onChange={e => onChange(e)}
-                required
-                error={invalid_email}
-            />
-            {invalid_email && <p className='error'>Invalid email</p>}
-            <br />
+            <FormControl>
+                <Input
+                    name='login'
+                    placeholder='Login'
+                    onChange={e => onChange(e)}
+                    required
+                />
+            </FormControl>
+            <FormControl error={invalid_email ? 'Invalid email' : null}>
+                <Input
+                    name='email'
+                    placeholder='Email'
+                    onChange={e => onChange(e)}
+                    required
+                    error={invalid_email}
+                />
+            </FormControl>
 
-            <Input
+            <FormControl error={invalid_password ? 'Password should be at least 8 characters long' : null}>
 
-                placeholder='Password'
-                name='password'
-                type="password"
+                <Input
 
-                overrides={{
-                    MaskToggleHideIcon: () => '🙈',
-                    MaskToggleShowIcon: () => '🐵',
-                }}
-                onChange={e => onChange(e)}
-                required
-                error={invalid_password}
-            />
-            {invalid_password && <p className='error'>Password should be at least 8 characters long</p>}
-            <br />
-            <Input
+                    placeholder='Password'
+                    name='password'
+                    type="password"
 
-                placeholder='Repeat Password'
-                name='password2'
-                type="password"
-                overrides={{
-                    MaskToggleHideIcon: () => '🙈',
-                    MaskToggleShowIcon: () => '🐵',
-                }}
-                onChange={e => onChange(e)}
-                required
-                error={invalid_password_match}
-            />
-            {invalid_password_match && <p className='error'>Passwords should match</p>}
-            <br />
+                    overrides={{
+                        MaskToggleHideIcon: () => '🙈',
+                        MaskToggleShowIcon: () => '🐵',
+                    }}
+                    onChange={e => onChange(e)}
+                    required
+                    error={invalid_password}
+                />
+            </FormControl>
+            <FormControl error={invalid_password_match ? 'Passwords should match' : null}>
+
+                <Input
+
+                    placeholder='Repeat Password'
+                    name='password2'
+                    type="password"
+                    overrides={{
+                        MaskToggleHideIcon: () => '🙈',
+                        MaskToggleShowIcon: () => '🐵',
+                    }}
+                    onChange={e => onChange(e)}
+                    required
+                    error={invalid_password_match}
+                />
+            </FormControl>
             <Button style={{ width: "100%" }} onClick={submit} kind={BKind.secondary} disabled={registration_disabled} >Register</Button>
         </div>
     </div>

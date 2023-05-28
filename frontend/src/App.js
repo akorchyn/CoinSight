@@ -3,7 +3,7 @@
 import './App.css';
 import Navbar from './components/common/Navbar';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Alerts from './components/Alerts';
+import Notifications from './pages/Notifications';
 import { ConfigProvider } from 'antd';
 import MainPage from './pages/MainPage';
 import AssetPage from './pages/AssetPage';
@@ -11,7 +11,7 @@ import Footer from './components/common/Footer';
 import { ApolloClient, ApolloProvider, InMemoryCache } from '@apollo/client';
 import { Client as Styletron } from 'styletron-engine-atomic';
 import { Provider as StyletronProvider } from 'styletron-react';
-import { DarkTheme, BaseProvider, styled } from 'baseui';
+import { DarkTheme, BaseProvider } from 'baseui';
 import Login from './pages/Login';
 import Registration from './pages/Registration';
 
@@ -42,7 +42,7 @@ function App() {
                 <Routes>
                   <Route path="/" element={<MainPage />} />
                   <Route path="/asset/:symbol" element={<AssetPage />} />
-                  <Route path="/alerts" element={<Alerts />} />
+                  <Route path="/notifications" element={<Notifications />} />
                   <Route path="/login" element={<Login />} />
                   <Route path="/register" element={<Registration />} />
                 </Routes>

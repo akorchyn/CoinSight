@@ -36,7 +36,6 @@ const AssetPage = () => {
     pollInterval: 5000,
   });
 
-
   if (loading) {
     return <Loading />;
   }
@@ -46,8 +45,8 @@ const AssetPage = () => {
   }
 
   const cryptocurrency = data?.crypto.bySymbol;
-
   const priceInfo = cryptocurrency.latestAggregatedPrice;
+
   return (
     <div className="container" >
       <div className="details">

@@ -191,7 +191,7 @@ const CryptoChart = ({ crypto_id }) => {
         <HighchartsReact highcharts={Highcharts} options={options} containerProps={{
             style: {
                 width: '90%',
-                height: '50vh'
+                height: '40vh'
             }
         }} />
 

@@ -16,12 +16,15 @@ diesel::table! {
         user_id -> Int4,
         #[sql_name = "type"]
         type_ -> Varchar,
-        source -> Nullable<Varchar>,
+        source -> Varchar,
         value_change -> Nullable<Numeric>,
         percent_change -> Nullable<Numeric>,
         created_at -> Timestamp,
         updated_at -> Nullable<Timestamp>,
         is_active -> Nullable<Bool>,
+        cryptocurrency -> Varchar,
+        current_price -> Numeric,
+        name -> Varchar,
     }
 }
 

@@ -1,4 +1,9 @@
-use csb_comm::{Login, LoginResponse, Register, Token};
+use std::str::FromStr;
+
+use csb_comm::{
+    notifications::NotificationData, EditNotification, Login, LoginResponse, Notification,
+    Notifications, Register, RemoveNotification, Token,
+};
 
 use csb_db_user::AsyncPgConnection;
 use hmac::digest::KeyInit;
@@ -134,13 +139,7 @@ impl csb_comm::user_service_server::UserService for UserService {
     ) -> Result<Response<LoginResponse>, Status> {
         let token = request.into_inner().token;
 
-        self.validate_token(Request::new(Token {
-            token: token.clone(),
-        }))
-        .await?; // Validate token first
-        let claims: Claims = token
-            .verify_with_key(&self.key)
-            .map_err(|_| Status::unauthenticated("Invalid token"))?;
+        let claims = self.validate(token.clone()).await?; // Validate token first
         let mut connection = self
             .context
             .db_connection
@@ -159,6 +158,170 @@ impl csb_comm::user_service_server::UserService for UserService {
 
     async fn validate_token(&self, request: Request<Token>) -> Result<Response<()>, Status> {
         let token = request.into_inner().token;
+        self.validate(token).await?;
+        Ok(Response::new(()))
+    }
+
+    async fn add_notification(
+        &self,
+        request: Request<Notification>,
+    ) -> Result<Response<()>, Status> {
+        let Notification {
+            token,
+            coin_name,
+            source,
+            change_type,
+            change_value,
+            current_price,
+            name,
+        } = request.into_inner();
+
+        let Claims { user_id, .. } = self.validate(token).await?;
+        let db_connection = &mut self
+            .context
+            .db_connection
+            .get()
+            .await
+            .map_err(|_| Status::internal("Error while getting connection from the pool"))?;
+
+        let current_price = bigdecimal::BigDecimal::from_str(&current_price)
+            .map_err(|_| Status::invalid_argument("Invalid current price"))?;
+        let change_value = bigdecimal::BigDecimal::from_str(&change_value)
+            .map_err(|_| Status::invalid_argument("Invalid change value"))?;
+        let (type_, value_change, percent_change) = match change_type.as_str() {
+            "by Value" => (change_type, Some(change_value), None),
+            "by Percent" => (change_type, None, Some(change_value)),
+            _ => return Err(Status::invalid_argument("Invalid change type")),
+        };
+
+        let notification = csb_db_user::models::NewNotification {
+            name,
+            user_id,
+            cryptocurrency: coin_name,
+            source,
+            value_change,
+            percent_change,
+            type_,
+            current_price,
+        };
+        notification.insert(db_connection).await.map_err(|_| {
+            Status::internal("Error. Failed to insert notification into the database")
+        })?;
+        Ok(Response::new(()))
+    }
+
+    async fn remove_notification(
+        &self,
+        request: Request<RemoveNotification>,
+    ) -> Result<Response<()>, Status> {
+        let RemoveNotification { token, id } = request.into_inner();
+        let Claims { user_id, .. } = self.validate(token).await?;
+        let db_connection = &mut self
+            .context
+            .db_connection
+            .get()
+            .await
+            .map_err(|_| Status::internal("Error while getting connection from the pool"))?;
+        let updated =
+            csb_db_user::models::Notification::remove_by_id(id as i32, user_id, db_connection)
+                .await
+                .map_err(|_| {
+                    Status::internal("Error. Failed to remove notification from the database")
+                })?;
+        if updated == 0 {
+            return Err(Status::not_found("Notification not found"));
+        }
+        Ok(Response::new(()))
+    }
+
+    async fn notifications(
+        &self,
+        request: Request<Token>,
+    ) -> Result<Response<Notifications>, Status> {
+        let token = request.into_inner().token;
+        let Claims { user_id, .. } = self.validate(token).await?;
+        let db_connection = &mut self
+            .context
+            .db_connection
+            .get()
+            .await
+            .map_err(|_| Status::internal("Error while getting connection from the pool"))?;
+        let notifications =
+            csb_db_user::models::Notification::all_from_user(user_id, db_connection)
+                .await
+                .map_err(|_| {
+                    Status::internal("Error. Failed to get notifications from the database")
+                })?;
+        let notifications = notifications
+            .into_iter()
+            .map(|notification| NotificationData {
+                id: notification.id as i64,
+                coin_name: notification.cryptocurrency,
+                source: notification.source,
+                change_type: notification.type_,
+                change_value: notification
+                    .value_change
+                    .map(|value| value.to_string())
+                    .unwrap_or_else(|| notification.percent_change.unwrap().to_string()),
+                current_price: notification.current_price.to_string(),
+                name: notification.name,
+            })
+            .collect();
+        Ok(Response::new(Notifications { notifications }))
+    }
+
+    async fn edit_notification(
+        &self,
+        request: Request<EditNotification>,
+    ) -> Result<Response<()>, Status> {
+        let EditNotification {
+            token,
+            id,
+            coin_name,
+            source,
+            change_type,
+            change_value,
+            current_price,
+            name,
+        } = request.into_inner();
+        let Claims { user_id, .. } = self.validate(token).await?;
+        let db_connection = &mut self
+            .context
+            .db_connection
+            .get()
+            .await
+            .map_err(|_| Status::internal("Error while getting connection from the pool"))?;
+
+        let current_price = bigdecimal::BigDecimal::from_str(&current_price)
+            .map_err(|_| Status::invalid_argument("Invalid current price"))?;
+        let change_value = bigdecimal::BigDecimal::from_str(&change_value)
+            .map_err(|_| Status::invalid_argument("Invalid change value."))?;
+        let (type_, value_change, percent_change) = match change_type.as_str() {
+            "by Value" => (change_type, Some(change_value), None),
+            "by Percent" => (change_type, None, Some(change_value)),
+            _ => return Err(Status::invalid_argument("Invalid change type")),
+        };
+        let mut notification =
+            csb_db_user::models::Notification::by_id(id as i32, user_id, db_connection)
+                .await
+                .map_err(|_| Status::not_found("Notification not found"))?;
+        notification.cryptocurrency = coin_name;
+        notification.source = source;
+        notification.type_ = type_;
+        notification.value_change = value_change;
+        notification.percent_change = percent_change;
+        notification.current_price = current_price;
+        notification.name = name;
+        notification
+            .update(db_connection)
+            .await
+            .map_err(|_| Status::internal("Error. Failed to update notification"))?;
+        Ok(Response::new(()))
+    }
+}
+
+impl UserService {
+    async fn validate(&self, token: String) -> Result<Claims, Status> {
         let claims: Claims = token
             .verify_with_key(&self.key)
             .map_err(|_| Status::unauthenticated("Invalid token"))?;
@@ -184,7 +347,7 @@ impl csb_comm::user_service_server::UserService for UserService {
             return Err(Status::unauthenticated("Revoked token"));
         }
 
-        Ok(Response::new(()))
+        Ok(claims)
     }
 }
 

@@ -4,6 +4,7 @@ use crate::types::user;
 use crate::Context;
 
 pub struct Mutation;
+use crate::grpc_error_to_field_error;
 
 #[graphql_object(context = Context)]
 impl Mutation {
@@ -14,14 +15,16 @@ impl Mutation {
     fn users() -> FieldResult<users::UserMutation> {
         Ok(users::UserMutation)
     }
+
+    fn notification() -> notifications::NotificationMutation {
+        notifications::NotificationMutation
+    }
 }
 
 mod users {
 
     use chrono::NaiveDateTime;
     use csb_comm::LoginResponse;
-
-    use crate::grpc_error_to_field_error;
 
     use super::*;
 
@@ -86,6 +89,85 @@ mod users {
             let request = tonic::Request::new(csb_comm::Token { token });
             user_service
                 .validate_token(request)
+                .await
+                .map_err(grpc_error_to_field_error)?;
+            Ok(true)
+        }
+    }
+}
+
+mod notifications {
+    use super::*;
+
+    pub struct NotificationMutation;
+
+    #[graphql_object(context = Context)]
+    impl NotificationMutation {
+        async fn create(
+            context: &Context,
+            token: String,
+            name: String,
+            coin_name: String,
+            source: String,
+            change_type: String,
+            change_value: String,
+            current_price: String,
+        ) -> FieldResult<bool> {
+            let mut user_service = context.user_service.client().await?;
+            let request = tonic::Request::new(csb_comm::Notification {
+                token,
+                coin_name,
+                source,
+                change_type,
+                change_value,
+                current_price,
+                name,
+            });
+            user_service
+                .add_notification(request)
+                .await
+                .map_err(grpc_error_to_field_error)?;
+            Ok(true)
+        }
+
+        async fn remove(context: &Context, token: String, id: i32) -> FieldResult<bool> {
+            let mut user_service = context.user_service.client().await?;
+            let request = tonic::Request::new(csb_comm::RemoveNotification {
+                token,
+                id: id as i64,
+            });
+            user_service
+                .remove_notification(request)
+                .await
+                .map_err(grpc_error_to_field_error)?;
+            Ok(true)
+        }
+
+        #[allow(clippy::too_many_arguments)]
+        async fn edit(
+            context: &Context,
+            token: String,
+            id: i32,
+            name: String,
+            coin_name: String,
+            source: String,
+            change_type: String,
+            change_value: String,
+            current_price: String,
+        ) -> FieldResult<bool> {
+            let mut user_service = context.user_service.client().await?;
+            let request = tonic::Request::new(csb_comm::EditNotification {
+                token,
+                id: id as i64,
+                coin_name,
+                source,
+                change_type,
+                change_value,
+                current_price,
+                name,
+            });
+            user_service
+                .edit_notification(request)
                 .await
                 .map_err(grpc_error_to_field_error)?;
             Ok(true)

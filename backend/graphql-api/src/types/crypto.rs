@@ -1,6 +1,6 @@
 use bigdecimal::BigDecimal;
 use csb_db_crypto::models;
-use juniper::{graphql_object, FieldResult, GraphQLObject};
+use juniper::{graphql_object, FieldResult};
 
 use crate::Context;
 
