@@ -1,8 +1,6 @@
-use diesel_async::{
-    pooled_connection::{bb8::Pool, AsyncDieselConnectionManager},
-    AsyncPgConnection,
-};
+use diesel_async::pooled_connection::{bb8::Pool, AsyncDieselConnectionManager};
 
+pub use diesel_async::AsyncPgConnection;
 pub use error::Error;
 
 pub use diesel;

@@ -24,6 +24,12 @@ pub struct Notification {
 }
 
 impl Notification {
+    pub async fn all(db_connection: &mut AsyncPgConnection) -> QueryResult<Vec<Notification>> {
+        notifications::table
+            .load::<Notification>(db_connection)
+            .await
+    }
+
     pub async fn all_from_user(
         user_id: i32,
         db_connection: &mut AsyncPgConnection,

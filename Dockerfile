@@ -37,3 +37,7 @@ CMD ["/app/price-aggregator"]
 FROM runner as user-service
 COPY --from=builder ./target/release/user-service ./app/user-service
 CMD ["/app/user-service"]
+
+FROM runner as notification-service
+COPY --from=builder ./target/release/notification-service ./app/notification-service
+CMD ["/app/notification-service"]

@@ -126,6 +126,20 @@ services:
       - PORT=8001
       - DATABASE_URL=${USER_DATABASE_URL}
       - KEY=${KEY}
+  notification-service:
+    build:
+      context: .
+      target: notification-service
+    restart: always
+    depends_on:
+      - postgres
+      - postgres-user
+    networks:
+      - network
+    environment:
+      - CRYPTO_DATABASE_URL=${DATABASE_URL}
+      - USER_DATABASE_URL=${USER_DATABASE_URL}
+      - BRELLO_API_KEY=${BRELLO_API_KEY}
   frontend:
     restart: always
     build: frontend

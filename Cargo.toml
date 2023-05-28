@@ -12,6 +12,7 @@ members = [
     "backend/collectors/gateio",
     "backend/aggregator",
     "backend/user-service",
+    "backend/notification-service",
 ]
 
 

@@ -41,6 +41,16 @@ impl User {
             .await
             .optional()
     }
+
+    pub async fn by_id(connection: &mut AsyncPgConnection, id: i32) -> QueryResult<Option<Self>> {
+        use crate::schema::users::dsl::{id as id_column, users};
+
+        users
+            .filter(id_column.eq(id))
+            .first(connection)
+            .await
+            .optional()
+    }
 }
 
 #[derive(Insertable)]
