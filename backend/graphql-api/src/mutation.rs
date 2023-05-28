@@ -103,6 +103,7 @@ mod notifications {
 
     #[graphql_object(context = Context)]
     impl NotificationMutation {
+        #[allow(clippy::too_many_arguments)]
         async fn create(
             context: &Context,
             token: String,

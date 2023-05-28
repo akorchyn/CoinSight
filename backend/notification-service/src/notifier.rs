@@ -94,7 +94,6 @@ pub(crate) struct Notifier {
     user_db: csb_db_user::Db,
     crypto_db: csb_db_crypto::Db,
     brello_api_key: String,
-    user_asset_notified: HashMap<i32, i32>,
 }
 
 impl Notifier {
@@ -106,7 +105,6 @@ impl Notifier {
         Self {
             user_db,
             crypto_db,
-            user_asset_notified: HashMap::new(),
             brello_api_key,
         }
     }
