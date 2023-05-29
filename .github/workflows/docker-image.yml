@@ -30,3 +30,5 @@ jobs:
       run: docker build . --file Dockerfile --tag cs-user-service:$(date +%s) --target user-service
     - name: Build the cs-notification-service image
       run: docker build . --file Dockerfile --tag cs-notification-service:$(date +%s) --target notification-service
+    - name: Build frontend
+      run: docker build frontend --file Dockerfile --tag cs-frontend:$(date +%s)
