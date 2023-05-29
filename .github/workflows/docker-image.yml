@@ -1,0 +1,32 @@
+name: Docker Image CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Build the cs-graphql image
+      run: docker build . --file Dockerfile --tag cs-graphql:$(date +%s) --target graphql
+    - name: Build the cs-chainlink-collector image
+      run: docker build . --file Dockerfile --tag cs-chainlink-collector:$(date +%s) --target chainlink-collector
+    - name: Build the cs-coingecko-collector image
+      run: docker build . --file Dockerfile --tag cs-coingecko-collector:$(date +%s) --target coingecko-collector
+    - name: Build the cs-cryptocompare-collector image
+      run: docker build . --file Dockerfile --tag cs-cryptocompare-collector:$(date +%s) --target cryptocompare-collector
+    - name: Build the cs-gateio-collector image
+      run: docker build . --file Dockerfile --tag cs-gateio-collector:$(date +%s) --target gateio-collector
+    - name: Build the cs-aggregator image
+      run: docker build . --file Dockerfile --tag cs-aggregator:$(date +%s) --target aggregator
+    - name: Build the cs-user-service image
+      run: docker build . --file Dockerfile --tag cs-user-service:$(date +%s) --target user-service
+    - name: Build the cs-notification-service image
+      run: docker build . --file Dockerfile --tag cs-notification-service:$(date +%s) --target notification-service
