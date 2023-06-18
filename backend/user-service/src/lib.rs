@@ -2,10 +2,10 @@ use std::str::FromStr;
 
 use csb_comm::{
     notifications::NotificationData, EditNotification, Login, LoginResponse, Notification,
-    Notifications, Register, RemoveNotification, Token,
+    Notifications, Register, RemoveNotification, StartTelegramResponse, Token,
 };
 
-use csb_db_user::AsyncPgConnection;
+use csb_db_user::{models::TelegramAuth, AsyncPgConnection};
 use hmac::digest::KeyInit;
 use hmac::Hmac;
 use jwt::{SignWithKey, VerifyWithKey};
@@ -317,6 +317,28 @@ impl csb_comm::user_service_server::UserService for UserService {
             .await
             .map_err(|_| Status::internal("Error. Failed to update notification"))?;
         Ok(Response::new(()))
+    }
+
+    async fn start_telegram_auth(
+        &self,
+        request: Request<Token>,
+    ) -> Result<Response<StartTelegramResponse>, Status> {
+        let token = request.into_inner().token;
+        let Claims { user_id, .. } = self.validate(token).await?;
+        let random_code = rand::thread_rng().gen_range(100000..999999).to_string();
+        let db = &mut self
+            .context
+            .db_connection
+            .get()
+            .await
+            .map_err(|_| Status::internal("Error while getting connection from the pool"))?;
+        TelegramAuth::set_auth_code(db, user_id, &random_code)
+            .await
+            .map_err(|_| {
+                Status::internal("Error. Failed to set telegram auth code into the database")
+            })?;
+
+        Ok(Response::new(StartTelegramResponse { code: random_code }))
     }
 }
 

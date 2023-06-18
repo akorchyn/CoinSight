@@ -29,6 +29,15 @@ diesel::table! {
 }
 
 diesel::table! {
+    telegram_auth (id) {
+        id -> Int4,
+        user_id -> Int4,
+        telegram_id -> Nullable<Int8>,
+        auth_code -> Varchar,
+    }
+}
+
+diesel::table! {
     tokens (id) {
         id -> Int4,
         user_id -> Int4,
@@ -52,11 +61,13 @@ diesel::table! {
 
 diesel::joinable!(notification_preferences -> notifications (notification_id));
 diesel::joinable!(notifications -> users (user_id));
+diesel::joinable!(telegram_auth -> users (user_id));
 diesel::joinable!(tokens -> users (user_id));
 
 diesel::allow_tables_to_appear_in_same_query!(
     notification_preferences,
     notifications,
+    telegram_auth,
     tokens,
     users,
 );

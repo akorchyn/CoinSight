@@ -5,7 +5,7 @@ COPY Cargo.toml /
 COPY Cargo.lock /
 RUN cargo build --release
 
-FROM debian:latest as runner
+FROM debian:bullseye-slim as runner
 RUN apt update -y && apt install -y libpq-dev libssl-dev ca-certificates
 RUN update-ca-certificates
 ENV SSL_CERT_FILE=/etc/ssl/certs/ca-certificates.crt
@@ -41,3 +41,8 @@ CMD ["/app/user-service"]
 FROM runner as notification-service
 COPY --from=builder ./target/release/notification-service ./app/notification-service
 CMD ["/app/notification-service"]
+
+FROM runner as telegram-notification
+RUN apt update --yes && apt install openssl --yes
+COPY --from=builder ./target/release/tg-service ./app/tg-service
+CMD ["/app/tg-service"]

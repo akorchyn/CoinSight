@@ -9,3 +9,6 @@ pub use notifications::*;
 
 mod notifications_preferences;
 pub use notifications_preferences::*;
+
+mod telegram;
+pub use telegram::*;

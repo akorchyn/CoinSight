@@ -1,5 +1,5 @@
 [package]
-name = "notification-service"
+name = "tg-service"
 version = "0.1.0"
 edition.workspace = true
 
@@ -10,10 +10,10 @@ futures.workspace = true
 chrono.workspace = true
 anyhow.workspace = true
 bigdecimal.workspace = true
-serde_json = "1.0"
 reqwest.workspace = true
+teloxide = { version = "0.12", features = ["macros"] }
 tonic.workspace = true
+env_logger = "0.10"
 
-csb-db-crypto.workspace = true
-csb-db-user.workspace = true
 csb-comm.workspace = true
+csb-db-user.workspace = true

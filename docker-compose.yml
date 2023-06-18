@@ -134,12 +134,27 @@ services:
     depends_on:
       - postgres
       - postgres-user
+      - telegram-notification
     networks:
       - network
     environment:
       - CRYPTO_DATABASE_URL=${DATABASE_URL}
       - USER_DATABASE_URL=${USER_DATABASE_URL}
       - BRELLO_API_KEY=${BRELLO_API_KEY}
+      - TELEGRAM_NOTIFICATION_URL="http://telegram-notification:8002"
+  telegram-notification:
+    build:
+      context: .
+      target: telegram-notification
+    restart: always
+    depends_on:
+      - postgres-user
+    networks:
+      - network
+    environment:
+      - PORT=8002
+      - TELOXIDE_TOKEN=${TELOXIDE_TOKEN}
+      - DATABASE_URL=${USER_DATABASE_URL}
   frontend:
     restart: always
     build: frontend

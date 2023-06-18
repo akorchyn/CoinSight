@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+package coin_sight;
+import "google/protobuf/empty.proto";
+
+service NotificationService {
+    rpc SendNotification(NotificationRequest) returns (google.protobuf.Empty);
+}
+
+message NotificationRequest {
+    string title = 1;
+    string body = 2;
+    string user_id = 4;
+}

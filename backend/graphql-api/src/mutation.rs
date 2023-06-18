@@ -93,6 +93,16 @@ mod users {
                 .map_err(grpc_error_to_field_error)?;
             Ok(true)
         }
+
+        async fn start_telegram_auth(context: &Context, token: String) -> FieldResult<String> {
+            let mut user_service = context.user_service.client().await?;
+            let request = tonic::Request::new(csb_comm::Token { token });
+            let response = user_service
+                .start_telegram_auth(request)
+                .await
+                .map_err(grpc_error_to_field_error)?;
+            Ok(response.into_inner().code)
+        }
     }
 }
 

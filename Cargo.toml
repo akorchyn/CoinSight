@@ -13,6 +13,7 @@ members = [
     "backend/aggregator",
     "backend/user-service",
     "backend/notification-service",
+    "backend/telegram-notification",
 ]
 
 

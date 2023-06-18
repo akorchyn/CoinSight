@@ -2,7 +2,6 @@ syntax = "proto3";
 
 package coin_sight;
 import "google/protobuf/empty.proto";
-import "google/protobuf/timestamp.proto";
 
 service UserService {
     rpc login(Login) returns (LoginResponse);
@@ -15,6 +14,8 @@ service UserService {
     rpc notifications(Token) returns (Notifications);
     rpc remove_notification(RemoveNotification) returns (google.protobuf.Empty);
     rpc edit_notification(EditNotification) returns (google.protobuf.Empty);
+
+    rpc start_telegram_auth(Token) returns (StartTelegramResponse);
 }
 
 message Login {
@@ -74,4 +75,8 @@ message EditNotification {
 message RemoveNotification {
     string token = 1;
     int64 id = 2;
+}
+
+message StartTelegramResponse {
+    string code = 1;
 }

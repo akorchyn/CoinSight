@@ -25,3 +25,12 @@
     align-items: center;
     flex-wrap: wrap;
 }
+
+.tgIcon {
+    width: 30px;
+    height: 30px;
+    margin: 0 0 0 10px;
+    cursor: pointer;
+    border-radius: 50%;
+
+}

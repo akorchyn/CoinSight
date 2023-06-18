@@ -1,10 +1,12 @@
 use std::collections::HashMap;
 
 use bigdecimal::BigDecimal;
+use csb_comm::{notification_service_client::NotificationServiceClient, NotificationRequest};
 use csb_db_crypto::models::{AggregatedPrice, Cryptocurrency, Price, Source};
-use csb_db_user::models::{Notification, User};
+use csb_db_user::models::{Notification, TelegramAuth, User};
 use reqwest::header::HeaderMap;
 use serde_json::json;
+use tonic::{transport::Channel, IntoStreamingRequest};
 
 enum NotificationType {
     PriceChange,
@@ -94,6 +96,7 @@ pub(crate) struct Notifier {
     user_db: csb_db_user::Db,
     crypto_db: csb_db_crypto::Db,
     brello_api_key: String,
+    tg_client: NotificationServiceClient<Channel>,
 }
 
 impl Notifier {
@@ -101,11 +104,13 @@ impl Notifier {
         user_db: csb_db_user::Db,
         crypto_db: csb_db_crypto::Db,
         brello_api_key: String,
+        tg_client: NotificationServiceClient<Channel>,
     ) -> Self {
         Self {
             user_db,
             crypto_db,
             brello_api_key,
+            tg_client,
         }
     }
 
@@ -170,26 +175,46 @@ impl Notifier {
                     println!("Failed to get connection to user db");
                     continue;
                 }
+                let mut connection = connection.unwrap();
 
-                let user = csb_db_user::models::User::by_id(
-                    &mut connection.unwrap(),
-                    parsed_notification.user_id,
-                )
-                .await;
+                let user =
+                    csb_db_user::models::User::by_id(&mut connection, parsed_notification.user_id)
+                        .await;
                 if user.is_err() {
                     println!("Failed to get user {}", parsed_notification.user_id);
                     continue;
                 }
                 let user = user.unwrap();
+                let tg_data =
+                    TelegramAuth::by_user(&mut connection, parsed_notification.user_id).await;
 
                 if user.is_none() {
                     println!("User {} does not exist", parsed_notification.user_id);
                     continue;
                 }
+                let user = user.unwrap();
+                let email = if tg_data.ok().flatten().is_some() {
+                    if self
+                        .send_tg_notification(&parsed_notification, &user)
+                        .await
+                        .is_none()
+                    {
+                        println!(
+                            "Failed to send notification to user {}",
+                            parsed_notification.user_id
+                        );
+                        true
+                    } else {
+                        false
+                    }
+                } else {
+                    true
+                };
 
-                if send_email_brevo(&self.brello_api_key, &parsed_notification, &user.unwrap())
-                    .await
-                    .is_none()
+                if email
+                    && send_email_brevo(&self.brello_api_key, &parsed_notification, &user)
+                        .await
+                        .is_none()
                 {
                     println!(
                         "Failed to send notification to user {}",
@@ -228,6 +253,29 @@ impl Notifier {
             name: notification.name.clone(),
             price: notification.current_price,
         })
+    }
+
+    async fn send_tg_notification(
+        &self,
+        parsed_notification: &ParsedNotification,
+        user: &User,
+    ) -> Option<()> {
+        let mut message = String::new();
+        message.push_str(&format!(
+            "Hello, {}!\nYour '{}' notification has alerted. Please check it.\n",
+            user.login, parsed_notification.name
+        ));
+        let request = NotificationRequest {
+            user_id: user.id.to_string(),
+            title: parsed_notification.name.clone(),
+            body: message,
+        };
+        let mut client = self.tg_client.clone();
+        if let Err(e) = client.send_notification(request).await {
+            println!("Failed to send notification to user {}: {}", user.id, e);
+            return None;
+        }
+        Some(())
     }
 }
 

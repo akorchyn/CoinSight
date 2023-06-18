@@ -12,6 +12,7 @@ pub mod schema;
 
 pub type DbPool = Pool<AsyncPgConnection>;
 
+#[derive(Clone)]
 pub struct Db {
     pub db_connection: DbPool,
 }

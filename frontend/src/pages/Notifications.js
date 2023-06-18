@@ -15,6 +15,7 @@ import Price from '../components/common/Price';
 import TextMsg from '../components/common/TextMsg';
 import { ButtonGroup } from 'baseui/button-group';
 import CreateNotification from '../components/notification/Create';
+import TelegramAuthButton from '../components/common/TelegramAuthButton';
 
 const LOAD_NOTIFICATIONS = gql`
     query LoadNotifications($token: String!) {
@@ -59,7 +60,7 @@ const Notifications = () => {
 
         window.addEventListener('storage', updateToken);
         updateToken();
-    }, []);
+    }, [navigate]);
 
 
     if (loading || data === undefined) return <Loading />;
@@ -83,6 +84,7 @@ const Notifications = () => {
                 <CreateNotification callback={() => {
                     refetch();
                 }} />
+                <TelegramAuthButton />
             </h1>
             <div className='list'>
                 {
