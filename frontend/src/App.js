@@ -1,5 +1,6 @@
 // src/App.js
 
+
 import './App.css';
 import Navbar from './components/common/Navbar';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
@@ -16,7 +17,7 @@ import Login from './pages/Login';
 import Registration from './pages/Registration';
 
 const client = new ApolloClient({
-  uri: process.env.REACT_APP_API_ENDPOINT,
+  uri: "/graphql",
   fetchOptions: {
     mode: 'no-cors',
   },
