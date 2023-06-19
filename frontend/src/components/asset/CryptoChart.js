@@ -93,6 +93,7 @@ const CryptoChart = ({ crypto_id }) => {
             },
         }
     };
+    const tickInterval = sources[0]?.cryptoHistory[0]?.price < 1. ? 0.005 : undefined;
 
     const options = {
         chart: {
@@ -129,7 +130,7 @@ const CryptoChart = ({ crypto_id }) => {
                 text: "Price data",
             },
             ...axisOptions,
-            tickInterval: sources[0].cryptoHistory[0].price < 1. ? 0.005 : undefined,
+            tickInterval,
             type: 'linear'
 
         },
