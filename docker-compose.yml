@@ -141,7 +141,7 @@ services:
       - CRYPTO_DATABASE_URL=${DATABASE_URL}
       - USER_DATABASE_URL=${USER_DATABASE_URL}
       - BRELLO_API_KEY=${BRELLO_API_KEY}
-      - TELEGRAM_NOTIFICATION_URL="http://telegram-notification:8002"
+      - TELEGRAM_NOTIFICATION_URL=http://telegram-notification:8002
   telegram-notification:
     build:
       context: .
