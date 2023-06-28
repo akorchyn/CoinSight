@@ -1,34 +1,68 @@
-name: Docker Image CI
-
+name: Build and push Docker images
 on:
   push:
-    branches: [ "main" ]
+    branches:
+      - main
   pull_request:
-    branches: [ "main" ]
-
+    branches:
+      - main
 jobs:
-
   build:
-
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - target: graphql
+            context: .
+          - target: chainlink-collector
+            context: .
+          - target: coingecko-collector
+            context: .
+          - target: cryptocompare-collector
+            context: .
+          - target: gateio-collector
+            context: .
+          - target: aggregator
+            context: .
+          - target: user-service
+            context: .
+          - target: notification-service
+            context: .
+          - target: telegram-notification
+            context: .
+          - target: frontend
+            context: ./frontend
 
     steps:
-    - uses: actions/checkout@v3
-    - name: Build the cs-graphql image
-      run: docker build . --file Dockerfile --tag cs-graphql:$(date +%s) --target graphql
-    - name: Build the cs-chainlink-collector image
-      run: docker build . --file Dockerfile --tag cs-chainlink-collector:$(date +%s) --target chainlink-collector
-    - name: Build the cs-coingecko-collector image
-      run: docker build . --file Dockerfile --tag cs-coingecko-collector:$(date +%s) --target coingecko-collector
-    - name: Build the cs-cryptocompare-collector image
-      run: docker build . --file Dockerfile --tag cs-cryptocompare-collector:$(date +%s) --target cryptocompare-collector
-    - name: Build the cs-gateio-collector image
-      run: docker build . --file Dockerfile --tag cs-gateio-collector:$(date +%s) --target gateio-collector
-    - name: Build the cs-aggregator image
-      run: docker build . --file Dockerfile --tag cs-aggregator:$(date +%s) --target aggregator
-    - name: Build the cs-user-service image
-      run: docker build . --file Dockerfile --tag cs-user-service:$(date +%s) --target user-service
-    - name: Build the cs-notification-service image
-      run: docker build . --file Dockerfile --tag cs-notification-service:$(date +%s) --target notification-service
-    - name: Build frontend
-      run: docker build frontend --file Dockerfile --tag cs-frontend:$(date +%s)
+      - name: Check out code
+        uses: actions/checkout@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Login to GitHub Packages
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Set DOCKERFILE environment variable
+        run: echo "DOCKERFILE=${{ matrix.context }}/Dockerfile" >> $GITHUB_ENV
+
+      - name: Build and push image (push)
+        if: github.event_name == 'push'
+        uses: docker/build-push-action@v4
+        with:
+          context: ${{ matrix.context }}
+          file: ${{ env.DOCKERFILE }}
+          target: ${{ matrix.target }}
+          push: true
+          tags: ghcr.io/${{ github.repository_owner }}/${{ matrix.target }}:${{ github.sha }}
+
+      - name: Build image (pull request)
+        if: github.event_name == 'pull_request'
+        uses: docker/build-push-action@v4
+        with:
+          context: ${{ matrix.context }}
+          file: ${{ env.DOCKERFILE }}
+          target: ${{ matrix.target }}
