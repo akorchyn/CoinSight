@@ -157,7 +157,9 @@ services:
       - DATABASE_URL=${USER_DATABASE_URL}
   frontend:
     restart: always
-    build: frontend
+    build: 
+      context: ./frontend
+      target: frontend
     depends_on:
       - graphql
     networks:
