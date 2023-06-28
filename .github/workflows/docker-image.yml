@@ -13,25 +13,25 @@ jobs:
       matrix:
         include:
           - target: graphql
-            dockerfile: ./Dockerfile
+            context: .
           - target: chainlink-collector
-            dockerfile: ./Dockerfile
+            context: .
           - target: coingecko-collector
-            dockerfile: ./Dockerfile
+            context: .
           - target: cryptocompare-collector
-            dockerfile: ./Dockerfile
+            context: .
           - target: gateio-collector
-            dockerfile: ./Dockerfile
+            context: .
           - target: aggregator
-            dockerfile: ./Dockerfile
+            context: .
           - target: user-service
-            dockerfile: ./Dockerfile
+            context: .
           - target: notification-service
-            dockerfile: ./Dockerfile
+            context: .
           - target: telegram-notification
-            dockerfile: ./Dockerfile
+            context: .
           - target: frontend
-            dockerfile: ./frontend/Dockerfile
+            context: ./frontend
 
     steps:
       - name: Check out code
@@ -46,13 +46,15 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Set DOCKERFILE environment variable
+        run: echo "DOCKERFILE=${{ matrix.context }}/Dockerfile" >> $GITHUB_ENV
 
       - name: Build and push image (push)
         if: github.event_name == 'push'
         uses: docker/build-push-action@v4
         with:
-          context: .
-          file: ${{ matrix.dockerfile }}
+          context: ${{ matrix.context }}
+          file: ${{ env.DOCKERFILE }}
           target: ${{ matrix.target }}
           push: true
           tags: ghcr.io/${{ github.repository_owner }}/${{ matrix.target }}:${{ github.sha }}
@@ -61,6 +63,6 @@ jobs:
         if: github.event_name == 'pull_request'
         uses: docker/build-push-action@v4
         with:
-          context: .
-          file: ${{ matrix.dockerfile }}
+          context: ${{ matrix.context }}
+          file: ${{ env.DOCKERFILE }}
           target: ${{ matrix.target }}
