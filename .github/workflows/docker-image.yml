@@ -58,7 +58,7 @@ jobs:
           target: ${{ matrix.target }}
           push: true
           tags: ghcr.io/${{ github.repository_owner }}/${{ matrix.target }}:${{ github.sha }}
-
+          platforms: "linux/arm64/v8,linux/amd64"
       - name: Build image (pull request)
         if: github.event_name == 'pull_request'
         uses: docker/build-push-action@v4
@@ -66,3 +66,4 @@ jobs:
           context: ${{ matrix.context }}
           file: ${{ env.DOCKERFILE }}
           target: ${{ matrix.target }}
+          platforms: "linux/arm64/v8,linux/amd64"
