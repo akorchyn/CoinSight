@@ -30,7 +30,7 @@ jobs:
             dockerfile: ./Dockerfile
           - target: telegram-notification
             dockerfile: ./Dockerfile
-          - target: frontend-image
+          - target: frontend
             dockerfile: ./frontend/Dockerfile
 
     steps:
