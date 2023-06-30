@@ -1,11 +1,11 @@
-FROM rustlang/rust:nightly AS builder
+FROM --platform=$BUILDPLATFORM rustlang/rust:nightly AS builder
 RUN apt update && apt install -y  protobuf-compiler
 COPY backend backend
 COPY Cargo.toml /
 COPY Cargo.lock /
 RUN cargo build --release
 
-FROM debian:bullseye-slim as runner
+FROM --platform=$BUILDPLATFORM debian:bullseye-slim as runner
 RUN apt update -y && apt install -y libpq-dev libssl-dev ca-certificates
 RUN update-ca-certificates
 ENV SSL_CERT_FILE=/etc/ssl/certs/ca-certificates.crt
