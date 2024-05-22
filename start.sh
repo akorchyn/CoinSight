@@ -7,3 +7,4 @@ echo "Running migrations..."
 sleep 5
 echo "Starting backend and frontend..."
 docker-compose up -d
+
